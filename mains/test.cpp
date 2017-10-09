@@ -5,7 +5,7 @@
 
 int main(int argc, char* argv[]){
 
-  if(argc != 3 or argc != 5){
+  if(not (argc == 3 or argc == 5)){
     cerr << "Argument number not valid! Given: " <<  argc << endl;
     cerr << "Usage: pdfname enu" << endl;
     cerr << "Usage: pdfname enu x y" << endl;
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]){
     y = atof(argv[4]);
   }
 
-  std::cout << "Energy: " << enu/pc->GeV << " GeV" << std::endl;
+  std::cout << "Energy: " << enu << " GeV" << std::endl;
   for (Current IT : {CC,NC}) {
     xs_obj.Set_InteractionType(IT);
     std::cout << "Interaction: " << IntTypeLabel[IT] << std::endl;
