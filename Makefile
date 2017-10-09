@@ -1,4 +1,6 @@
 #PATHS
+PREFIX=/usr/local/
+
 CURRENT_DIR 	= $(shell pwd)
 LHAPDF      	= $(PREFIX)
 BOOST       	= $(PREFIX)
@@ -15,8 +17,6 @@ INCLUDE_PATH  	+= -I$(LHAPDF)/include
 INCLUDE_PATH  	+= -I$(BOOST)/include
 INCLUDE_PATH    += -I$(PHOTOSPLINE)/include
 
-#Libraries
-PHOTOSPLINE_LIB     = -L$(PREFIX)/lib
 #Compiler
 CC 		= clang
 CXX 		= clang++
@@ -27,8 +27,7 @@ CXX 		= clang++
 CXX_FLAGS       =  $(INCLUDE_PATH) -I. -O3 -fPIC -std=c++11
 
 LD 		= clang++
-LD_FLAGS 	= -L/usr/local/lib/ -L/usr/lib -L$(LHAPDF)/lib -L$(BOOST)/lib -L$(TOOLS)/lib
-LD_FLAGS	+= $(PHOTOSPLINE_LIB)
+LD_FLAGS 	= -L/usr/local/lib/ -L/usr/lib -L$(LHAPDF)/lib -L$(BOOST)/lib -L$(PHOTOSPLINE)/lib
 LD_FLAGS 	+= -lLHAPDF
 LD_FLAGS 	+= -lgsl -lgslcblas
 LD_FLAGS	+= -lboost_system -lboost_iostreams -lboost_filesystem -lboost_regex
