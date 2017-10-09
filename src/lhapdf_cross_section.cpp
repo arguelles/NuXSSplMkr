@@ -22,6 +22,13 @@ LHAXS::LHAXS(std::string PDFname){
     //error_band = 100*boost::math::erf(1./sqrt(2.));
     error_band = 95;
     //error_band = 68;
+
+    // fundamental couplings
+    s_w = 0.2223; // weak angle
+    Lu2 = ( 1. - (4./3.)*s_w) * ( 1. - (4./3.)*s_w);
+    Ld2 = (-1. + (2./3.)*s_w) * (-1. + (2./3.)*s_w);
+    Ru2 = (    - (4./3.)*s_w) * (    - (4./3.)*s_w);
+    Rd2 = (      (2./3.)*s_w) * (      (2./3.)*s_w);
 }
 
 double LHAXS::SigR_Nu_LO_NC(double x, double y, map<int,LHAPDF::PDFUncertainty> dis, std::map<std::pair<int,int>,double> cov_m, int c){
@@ -35,12 +42,6 @@ double LHAXS::SigR_Nu_LO_NC(double x, double y, map<int,LHAPDF::PDFUncertainty> 
 	double a = y_p + CP_factor*y_m;
 	double b = y_p - CP_factor*y_m;
 
-  double s_w = 0.2223;
-
-  double Lu2 = ( 1. - (4./3.)*s_w) * ( 1. - (4./3.)*s_w);
-  double Ld2 = (-1. + (2./3.)*s_w) * (-1. + (2./3.)*s_w);
-  double Ru2 = (    - (4./3.)*s_w) * (    - (4./3.)*s_w);
-  double Rd2 = (      (2./3.)*s_w) * (      (2./3.)*s_w);
 
   map<int,double> SigRcoef;
   if (CP_factor > 0 ){
@@ -63,7 +64,7 @@ double LHAXS::SigR_Nu_LO_NC(double x, double y, map<int,LHAPDF::PDFUncertainty> 
     SigRcoef[-1] =    0.5*(Ru2 + Rd2)*(1. - y)*(1. - y) + 0.5*(Lu2 + Ld2);
     SigRcoef[2]  =    0.5*(Lu2 + Ld2)*(1. - y)*(1. - y)+ 0.5*(Ru2 + Rd2);
     SigRcoef[-2] =    0.5*(Ru2 + Rd2)*(1. - y)*(1. - y)+ 0.5*(Lu2 + Ld2);
-    SigRcoef[3]  =    (Ld2 + Rd2) *(1. - y)*(1. - y)+ (Ld2 + Rd2);
+    SigRcoef[3]  =    (Ld2 + Rd2)*(1. - y)*(1. - y)+ (Ld2 + Rd2);
     SigRcoef[-3] =    (Ld2 + Rd2)*(1. - y)*(1. - y) + (Ld2 + Rd2);
     SigRcoef[4]  =    (Lu2 + Ru2)*(1. - y)*(1. - y) + (Lu2 + Ru2);
     SigRcoef[-4] =    (Lu2 + Ru2)*(1. - y)*(1. - y) + (Lu2 + Ru2);
