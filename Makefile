@@ -38,35 +38,35 @@ LD_FLAGS	+= -lphotospline
 
 CT_OBJ = $(CT)src/CT12Pdf.o $(CURRENT_DIR)src/ct10_xs.o
 
-all: bin2/nu_cross.exe bin2/nu_cross_var.exe bin2/nu_cross_simple.exe bin2/nu_cross_simple_hack.exe bin2/nu_cross_full.exe bin2/nu_cross_full_a_la_aaron.exe bin2/nu_cross_full_a_la_aaron_tau.exe
-test: bin2/test.exe
-diff: bin2/nu_cross_diff.exe
+all: bin/nu_cross.exe bin/nu_cross_var.exe bin/nu_cross_simple.exe bin/nu_cross_simple_hack.exe bin/nu_cross_full.exe bin/nu_cross_full_a_la_aaron.exe bin/nu_cross_full_a_la_aaron_tau.exe
+test: bin/test.exe
+diff: bin/nu_cross_diff.exe
 
-bin2/nu_cross.exe: src/lhapdf_cross_section.o src/physconst.o mains2/nu_cross.o
+bin/nu_cross.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross.o
 	$(LD)  $^ $(LIBS) $(LD_FLAGS) -o $@
 
-bin2/nu_cross_var.exe: src/lhapdf_cross_section.o src/physconst.o mains2/nu_cross_var.o
+bin/nu_cross_var.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross_var.o
 	$(LD)  $^ $(LIBS) $(LD_FLAGS) -o $@
 
-bin2/nu_cross_simple.exe: src/lhapdf_cross_section.o src/physconst.o mains2/nu_cross_simple.o
+bin/nu_cross_simple.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross_simple.o
 	$(LD)  $^ $(LIBS) $(LD_FLAGS) -o $@
 
-bin2/nu_cross_full.exe: src/lhapdf_cross_section.o src/physconst.o mains2/nu_cross_full.o
+bin/nu_cross_full.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross_full.o
 	$(LD)  $^ $(LIBS) $(LD_FLAGS) -o $@
 
-bin2/nu_cross_full_a_la_aaron.exe: src/lhapdf_cross_section.o src/physconst.o mains2/nu_cross_full_a_la_aaron.o
+bin/nu_cross_full_a_la_aaron.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross_full_a_la_aaron.o
 	$(LD)  $^ $(LIBS) $(LD_FLAGS) -o $@
 
-bin2/test.exe: src/lhapdf_cross_section.o src/physconst.o mains2/test.o
+bin/test.exe: src/lhapdf_cross_section.o src/physconst.o mains/test.o
 	$(LD)  $^ $(LIBS) $(LD_FLAGS) -o $@
 
-bin2/nu_cross_diff.exe: src/lhapdf_cross_section.o src/physconst.o mains2/nu_cross_diff.o
+bin/nu_cross_diff.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross_diff.o
 	$(LD)  $^ $(LIBS) $(LD_FLAGS) -o $@
 
-bin2/nu_cross_full_a_la_aaron_tau.exe: src/lhapdf_cross_section.o src/physconst.o mains2/nu_cross_full_a_la_aaron_tau.o
+bin/nu_cross_full_a_la_aaron_tau.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross_full_a_la_aaron_tau.o
 	$(LD)  $^ $(LIBS) $(LD_FLAGS) -o $@
 
-bin2/nu_cross_simple_hack.exe: src/lhapdf_cross_section.o src/physconst.o mains2/nu_cross_simple_hack.o
+bin/nu_cross_simple_hack.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross_simple_hack.o
 	$(LD)  $^ $(LIBS) $(LD_FLAGS) -o $@
 
 %.o:%.cpp
@@ -74,4 +74,4 @@ bin2/nu_cross_simple_hack.exe: src/lhapdf_cross_section.o src/physconst.o mains2
 
 clean:
 	rm src/*.o
-# bin22/*.exe
+# bin2/*.exe
