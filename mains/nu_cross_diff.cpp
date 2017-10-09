@@ -4,6 +4,12 @@
 
 int main(int argc, char* argv[]){
 
+  if(argc != 2){
+    cerr << "Argument number not valid! Given: " <<  argc << endl;
+    cerr << "Usage: pdfname " << endl;
+    return 1;
+  }
+
   std::vector<double> e_range {
     1.00000000e+03,   1.08436597e+03,   1.17584955e+03,
     1.27505124e+03,   1.38262217e+03,   1.49926843e+03,
