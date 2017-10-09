@@ -1082,7 +1082,7 @@ double LHAXS::totalVar(){
   //std::cout << "stop" << std::endl;
   do
   {
-  std::cout << "Here: "<<gsl_monte_vegas_chisq (s_vegas) -1. << std::endl;
+  //std::cout << "Here: "<<gsl_monte_vegas_chisq (s_vegas) -1. << std::endl;
   gsl_monte_vegas_integrate (&F, xl, xu, dim, calls, r, s_vegas,
                               &res, &err);
   }
