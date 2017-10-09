@@ -41,6 +41,7 @@ double HK(double x, void* param){
 class LHAXS{
     private:
         double s_w,Lu2,Ld2,Ru2,Rd2;
+        bool quiet = false;
     private:
         QCDOrder qcdorder;
         vector<int> partons {-5,-4,-3,-2,-1,1,2,3,4,5,21};
@@ -81,6 +82,8 @@ class LHAXS{
 
         template<class T,double (T::*f)(double,double),int n,int m>
         double HGeneric(double, double);
+    public:
+        void ShutUp(bool quiet_){quiet = quiet_;}
     public:
         PhysConst* pc;
 

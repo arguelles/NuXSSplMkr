@@ -16,7 +16,7 @@ LHAXS::LHAXS(std::string PDFname){
         is_var = true;
     else
         is_var = false;
-    
+
     nmem = set->size()-1;
     pdfs = set->mkPDFs();
     //error_band = 100*boost::math::erf(1./sqrt(2.));
@@ -24,24 +24,23 @@ LHAXS::LHAXS(std::string PDFname){
     //error_band = 68;
 
     // fundamental couplings
-    s_w = 0.2223; // weak angle
+    s_w = 0.2223; // sin^2(weak_angle)
     Lu2 = ( 1. - (4./3.)*s_w) * ( 1. - (4./3.)*s_w);
     Ld2 = (-1. + (2./3.)*s_w) * (-1. + (2./3.)*s_w);
     Ru2 = (    - (4./3.)*s_w) * (    - (4./3.)*s_w);
     Rd2 = (      (2./3.)*s_w) * (      (2./3.)*s_w);
+    if(not quiet){
+      std::cout << "sin(th_w) " << s_w << std::endl;
+      std::cout << "Lu2 " << Lu2 << " Ld2 " << Ld2 << std::endl;
+      std::cout << "Ru2 " << Ru2 << " Rd2 " << Rd2 << std::endl;
+    }
 }
 
 double LHAXS::SigR_Nu_LO_NC(double x, double y, map<int,LHAPDF::PDFUncertainty> dis, std::map<std::pair<int,int>,double> cov_m, int c){
+  // using notation from https://arxiv.org/pdf/1102.0691.pdf
   double k = 0;
 	double q0 = 0.;
 	double q0bar = 0.;
-
-  //Following HEP PH 0407371 Eq. (21)
-	double y_p = 1. + (1.- y) * (1. - y);
-	double y_m = 1. - (1.- y) * (1. - y);
-	double a = y_p + CP_factor*y_m;
-	double b = y_p - CP_factor*y_m;
-
 
   map<int,double> SigRcoef;
   if (CP_factor > 0 ){
@@ -376,31 +375,21 @@ double LHAXS::SigRed_TMC(double x, double y, double q2){
 }
 
 double LHAXS::SigR_Nu_LO_NC(double x,double y, map<int, double> xq_arr){
-  double s_w = 0.2223;
-
-  double Lu2 = ( 1. - (4./3.)*s_w) * ( 1. - (4./3.)*s_w);
-  double Ld2 = (-1. + (2./3.)*s_w) * (-1. + (2./3.)*s_w);
-  double Ru2 = (    - (4./3.)*s_w) * (    - (4./3.)*s_w);
-  double Rd2 = (      (2./3.)*s_w) * (      (2./3.)*s_w);
-
   double u = xq_arr[1];
   double d = xq_arr[2];
   double s = xq_arr[3];
   double c = xq_arr[4];
   double b = xq_arr[5];
-  //double t = xq_arr[6];
+  double t = xq_arr[6];
   double ubar = xq_arr[-1];
   double dbar = xq_arr[-2];
   double sbar = xq_arr[-3];
   double cbar = xq_arr[-4];
   double bbar = xq_arr[-5];
-  //double tbar = xq_arr[-6];
+  double tbar = xq_arr[-6];
 
-  //double q0   = 0.5*(u + d)*(Lu2 + Ld2) + 0.5*(ubar + dbar)*(Ru2 + Rd2) + (s + b + sbar + bbar)*(Ld2 + Rd2) + (cbar + c + tbar + t)*(Lu2 + Ru2);
-  //double q0bar= 0.5*(u + d)*(Ru2 + Rd2) + 0.5*(ubar + dbar)*(Lu2 + Ld2) + (s + b + sbar + bbar)*(Ld2 + Rd2) + (cbar + c + tbar + t)*(Lu2 + Ru2);
-
-  double q0   = 0.5*(u + d)*(Lu2 + Ld2) + 0.5*(ubar + dbar)*(Ru2 + Rd2) + (s + b + sbar + bbar)*(Ld2 + Rd2) + (cbar + c)*(Lu2 + Ru2);
-  double q0bar= 0.5*(u + d)*(Ru2 + Rd2) + 0.5*(ubar + dbar)*(Lu2 + Ld2) + (s + b + sbar + bbar)*(Ld2 + Rd2) + (cbar + c)*(Lu2 + Ru2);
+  double q0   = 0.5*(u + d)*(Lu2 + Ld2) + 0.5*(ubar + dbar)*(Ru2 + Rd2) + (s + b)*(Ld2 + Rd2) + (c + t)*(Lu2 + Ru2);
+  double q0bar= 0.5*(u + d)*(Ru2 + Rd2) + 0.5*(ubar + dbar)*(Lu2 + Ld2) + (s + b)*(Ld2 + Rd2) + (c + t)*(Lu2 + Ru2);
 
   if (CP_factor > 0 )
     return (q0 + q0bar*(1.-y)*(1.-y));
