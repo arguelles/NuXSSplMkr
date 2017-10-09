@@ -65,9 +65,6 @@ bin/nu_cross_diff.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross
 bin/nu_cross_full_a_la_aaron_tau.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross_full_a_la_aaron_tau.o
 	$(LD)  $^ $(LIBS) $(LD_FLAGS) -o $@
 
-bin/nu_cross_simple_hack.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross_simple_hack.o
-	$(LD)  $^ $(LIBS) $(LD_FLAGS) -o $@
-
 %.o:%.cpp
 	$(CXX) $(CXX_FLAGS) -c $< -o $@
 
