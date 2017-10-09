@@ -37,7 +37,7 @@ LD_FLAGS	+= -lphotospline
 
 CT_OBJ = $(CT)src/CT12Pdf.o $(CURRENT_DIR)src/ct10_xs.o
 
-all: bin/nu_cross.exe bin/nu_cross_var.exe bin/nu_cross_simple.exe bin/nu_cross_simple_hack.exe bin/nu_cross_full.exe bin/nu_cross_full_a_la_aaron.exe bin/nu_cross_full_a_la_aaron_tau.exe
+all: bin/nu_cross.exe bin/nu_cross_var.exe bin/nu_cross_simple.exe bin/nu_cross_full.exe bin/nu_cross_full_a_la_aaron.exe bin/nu_cross_full_a_la_aaron_tau.exe
 test: bin/test.exe
 diff: bin/nu_cross_diff.exe
 
