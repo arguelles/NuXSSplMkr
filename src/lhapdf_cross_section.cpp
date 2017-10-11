@@ -801,25 +801,20 @@ double LHAXS::KernelXS_TMC(double * k){
 double LHAXS::KernelXS(double * k,int a){
   if (!ienu)
     throw std::runtime_error("energy not initialize");
-  double x = k[0];
-  double y = k[1];
+  double x = exp(k[0]);
+  double y = exp(k[1]);
   double Q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
 
   // same for CC and NC
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
 
-  //std::cout << ENU << " " << Q2  << " " <<  norm << " " << M_iso << " " << denum << " " << M_boson2 << std::endl;
-  //Following HEP PH 0407371 Eq. (7)
-  //if(INT_TYPE==NC)
-  //  d_lepton=0;
-
   if(INT_TYPE==CC){
     double h = x*y + d_lepton;
     if ((1. + x*d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.)
         return 0.;
   }
-  return norm*Evaluate(Q2, x, y, a);
+  return x * y * norm*Evaluate(Q2, x, y, a);
 }
 
 double LHAXS::KernelXSVar(double * k){
@@ -904,7 +899,7 @@ double LHAXS::dsdyVar(double y){
     F.params = this;
     // set y
     Y = y;
-    gsl_integration_qag ( &F, log(1.e-7), log(1.), 0, 1.e-5, 5000, 6, w, &result, &error);
+    gsl_integration_qag ( &F, log(1.e-7), log(1.), 0, 1.e-7, 5000, 6, w, &result, &error);
     gsl_integration_workspace_free(w);
 
     return result;
@@ -919,7 +914,7 @@ double LHAXS::dsdy(double y){
     F.params = this;
     // set y
     Y = y;
-    gsl_integration_qag ( &F, log(1.e-7), log(1.), 0, 1.e-5, 5000, 6, w, &result, &error);
+    gsl_integration_qag ( &F, log(1.e-7), log(1.), 0, 1.e-7, 5000, 6, w, &result, &error);
     gsl_integration_workspace_free(w);
 
     return result;

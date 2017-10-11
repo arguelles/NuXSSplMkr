@@ -68,10 +68,8 @@ int main(int argc, char* argv[]){
       for (PDFVar pdfvar : {central}){
         // neutrino = 1., antineutrino = -1
         std::string filename_dsdxdy = static_cast<std::string>(SAVE_PATH) + "dsdxdy-"+NeutrinoTypeLabel[neutype]+"-N-"+IntTypeLabel[IT]+"-"+pdfname+"_"+PDFVarLabel[pdfvar]+".dat";
-//        std::string filename_dsdy = static_cast<std::string>(SAVE_PATH) + "dsdy-"+NeutrinoTypeLabel[neutype]+"-N-"+IntTypeLabel[IT]+"-"+pdfname+"_"+PDFVarLabel[pdfvar]+".dat";
 
         ofstream outputfile_dsdxdy(filename_dsdxdy.c_str());
-//        ofstream outputfile_dsdy(filename_dsdy.c_str());
 
         for (double logenu=0;logenu<=7.;logenu+=0.05){
           double enu = pow(10, logenu);
@@ -81,20 +79,16 @@ int main(int argc, char* argv[]){
             for (double logy=-5.;logy<0.;logy+=0.025){
                 double y = pow(10, logy);
                 double zz[2];
-                zz[0] = x;
-                zz[1] = y;
+                zz[0] = log(x);
+                zz[1] = log(y);
 
                 double dsigdxdy = xs_obj.KernelXS(zz,PDFVarIndex[pdfvar])/cm2;
                 outputfile_dsdxdy << enu << "\t"<< x <<  "\t" << y << "\t" << dsigdxdy << std::endl;
             }
-            //double dsigdy = xs_obj.dsdy(x,PDFVarIndex[pdfvar])/cm2;
-            //double dsigdy = 0.;
-            //outputfile_dsdy << enu << "\t"<< x << "\t" << dsigdy << std::endl;
           }
         }
 
         outputfile_dsdxdy.close();
-        //outputfile_dsdy.close();
       }
     }
   }

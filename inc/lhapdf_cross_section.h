@@ -95,14 +95,14 @@ class LHAXS{
           return pdfs.size();
         }
 
-        double dsdy(double);
+        double dsdy(double y);
         double dsdyVar(double y);
 
-    protected:
-        double KernelXS_dsdy(double);
-        double KernelXS_dsdyVar(double x);
+        double KernelXS_dsdy(double y);
+        double KernelXS_dsdyVar(double y);
         double KernelXS(double*);
         double KernelXS(double*,int);
+    protected:
         double KernelXSVar(double*);
         double KernelXS_TMC(double*);
         template<double (LHAXS::*f)(double*)>
