@@ -129,9 +129,9 @@ int main(int argc, char* argv[]){
           //for (double logenu2=0;logenu2<=7.;logenu2+=0.05){
           //  double enu2= pow(10, logenu2);
           for ( double enu2 : e_range){
-            double y = enu2/enu;
+            double y = 1. - enu2/enu;
             double dsigdy=0;
-            if (y < 1.)
+            if (y > 0.)
               dsigdy = xs_obj.dsdyVar(y)/cm2;
             outputfile_dsdy << dsigdy/enu << "\t";
           }
