@@ -84,11 +84,10 @@ class LHAXS{
         double HGeneric(double, double);
     public:
         void ShutUp(bool quiet_){quiet = quiet_;}
-    public:
         PhysConst* pc;
-
         // us been very bad people
         double Y,X,Q2;
+    public:
         // =================
         LHAXS();
         LHAXS(string);
@@ -96,12 +95,12 @@ class LHAXS{
           return pdfs.size();
         }
 
-
-        double KernelXS_dsdy(double);
-        double KernelXS_dsdyVar(double x);
         double dsdy(double);
         double dsdyVar(double y);
 
+    protected:
+        double KernelXS_dsdy(double);
+        double KernelXS_dsdyVar(double x);
         double KernelXS(double*);
         double KernelXS(double*,int);
         double KernelXSVar(double*);
@@ -109,6 +108,7 @@ class LHAXS{
         template<double (LHAXS::*f)(double*)>
         double VegasIntegratorXS();
 
+    public:
         void Set_M_Lepton(double);
         void Set_CP_factor(double);
         void Set_InteractionType(Current);
@@ -116,6 +116,7 @@ class LHAXS{
         void Set_QCDOrder(QCDOrder);
         void Set_Variant(int);
 
+    protected:
         virtual double F1(double, double);
         virtual double F2(double, double);
         virtual double F3(double, double);
@@ -145,6 +146,7 @@ class LHAXS{
         double SigRed_Evaluate(double, double, double);
         double SigRed_TMC(double, double, double);
 
+    public:
         double total();
         double totalVar();
 

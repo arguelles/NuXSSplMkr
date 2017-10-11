@@ -999,7 +999,6 @@ double LHAXS::KernelXS_TMC(double * k){
   //Following HEP PH 0407371 Eq. (7)
   double h = x*y + d_lepton;
   double cc = (1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton;
-  //std::cout << x << " " << y << " " << q2 << "\t" << h << " " << cc << " ==> " << SigRed_TMC(x, y, q2) << std::endl;
   if ( cc > 0.)
       return 0.;
   return SigRed_TMC(x,y,q2);
@@ -1015,8 +1014,6 @@ double LHAXS::KernelXS_dsdyVar(double logx){
     double norm = GF2*M_iso*ENU/(2.*M_PI*denum);
     d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
-    //std::cout << norm * Evaluate(q2, x, Y, ivar) << std::endl;
-    //std::cout << Evaluate(q2, x, Y, ivar) << std::endl;
     return x * norm * Evaluate(q2, x, Y, ivar);
 }
 
