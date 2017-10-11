@@ -78,8 +78,8 @@ int main(int argc, char* argv[]){
           for (double logy=-5.;logy<0.;logy+=0.025){
               double y = pow(10, logy);
               double zz[2];
-              zz[0] = x;
-              zz[1] = y;
+              zz[0] = log(x);
+              zz[1] = log(y);
               outputfile_dsdxdy << enu << "\t"<< x <<  "\t" << y << "\t";
               for (unsigned int var = 0; var < xs_obj.GetNumVar(); var++){
                  double dsigdxdy = xs_obj.KernelXSVar(zz)/cm2;
