@@ -37,8 +37,9 @@ LD_FLAGS	+= -lphotospline
 
 CT_OBJ = $(CT)src/CT12Pdf.o $(CURRENT_DIR)src/ct10_xs.o
 
-all: bin/nu_cross.exe bin/nu_cross_var.exe bin/nu_total_cross_central.exe bin/nu_cross_full.exe bin/nu_cross_full_a_la_aaron.exe bin/nu_cross_full_a_la_aaron_tau.exe
+all: bin/nu_cross.exe bin/nu_cross_var.exe bin/nu_total_cross_central.exe bin/nu_cross_full.exe
 test: bin/test.exe
+aaron: bin/nu_cross_full_a_la_aaron_muon.exe bin/nu_cross_full_a_la_aaron_tau.exe
 diff: bin/nu_cross_diff.exe
 
 bin/nu_cross.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross.o
@@ -53,7 +54,7 @@ bin/nu_total_cross_central.exe: src/lhapdf_cross_section.o src/physconst.o mains
 bin/nu_cross_full.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross_full.o
 	$(LD)  $^ $(LIBS) $(LD_FLAGS) -o $@
 
-bin/nu_cross_full_a_la_aaron.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross_full_a_la_aaron.o
+bin/nu_cross_full_a_la_aaron_muon.exe: src/lhapdf_cross_section.o src/physconst.o mains/nu_cross_full_a_la_aaron_muon.o
 	$(LD)  $^ $(LIBS) $(LD_FLAGS) -o $@
 
 bin/test.exe: src/lhapdf_cross_section.o src/physconst.o mains/test.o
