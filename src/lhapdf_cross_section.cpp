@@ -639,7 +639,7 @@ double LHAXS::Evaluate (double Q2, double x, double y, int a){
 }
 
 //==================================================================================
-// SET OPTIONS 
+// SET OPTIONS
 //==================================================================================
 
 void LHAXS::Set_QCDOrder(QCDOrder qcdorder_){
