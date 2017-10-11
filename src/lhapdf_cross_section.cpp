@@ -3,6 +3,8 @@
 //#define DEBUG
 //#define _DIPOLE__
 
+// CONSTRUCTOR
+
 LHAXS::LHAXS(std::string PDFname){
     //initialize Constants
     pdfname = PDFname;
@@ -36,7 +38,12 @@ LHAXS::LHAXS(std::string PDFname){
     }
 }
 
-double LHAXS::SigR_Nu_LO_NC(double x, double y, map<int,LHAPDF::PDFUncertainty> dis, std::map<std::pair<int,int>,double> cov_m, int c){
+// REDUCED CROSS SECTION
+
+double LHAXS::SigR_Nu_LO_NC(double x, double y,
+                            map<int,LHAPDF::PDFUncertainty> dis,
+                            std::map<std::pair<int,int>,double> cov_m,
+                            int c){
   // using notation from https://arxiv.org/pdf/1102.0691.pdf
   double k = 0;
 	double q0 = 0.;
@@ -139,7 +146,9 @@ double LHAXS::SigR_Nu_LO_NC(double x, double y, map<int,LHAPDF::PDFUncertainty> 
 	return k;
 }
 
-double LHAXS::SigR_Nu_LO(double x, double y, map<int,LHAPDF::PDFUncertainty> dis, std::map<std::pair<int,int>,double> cov_m, int c){
+double LHAXS::SigR_Nu_LO(double x, double y,
+                         map<int,LHAPDF::PDFUncertainty> dis,
+                         std::map<std::pair<int,int>,double> cov_m, int c){
 	double k = 0.;
 
   //Following HEP PH 0407371 Eq. (21)
@@ -629,156 +638,6 @@ double LHAXS::Evaluate (double Q2, double x, double y, int a){
     return SigR_Nu_LO_NC(x, y, xer_arr, cor_mat, a);
 }
 
-/*
-double LHAXS::Evaluate (double Q2, double x, double y, int a){
-    double q = sqrt(Q2/pc->GeV);
-    vector<vector<double>> xpdf_arr;
-    vector<LHAPDF::PDFUncertainty> xer_arr;
-
-    //Quark Flavors
-    for (int i = -5; i<=5;i++){
-        vector<double> xf;
-        vector<double> delta_xf;
-        if (i==0)
-            continue;
-
-        LHAPDF::GridPDF* grid_central = dynamic_cast<LHAPDF::GridPDF*>(pdfs[0]);
-        string xt = "nearest";
-        grid_central -> setExtrapolator(xt);
-
-        for (size_t imem=0; imem<=nmem; imem++){
-
-            LHAPDF::GridPDF* grid = dynamic_cast<LHAPDF::GridPDF*>(pdfs[imem]);
-            grid -> setExtrapolator(xt);
-            xf.push_back(grid -> xfxQ(i, x, q));
-            double hij = + grid -> xfxQ(i, x, q) - grid_central -> xfxQ(i,x,q);
-            delta_xf.push_back(hij);
-        }
-
-        LHAPDF::PDFUncertainty xerror;
-        if ( is_var ){
-            double smp = 0.;
-            double smm = 0.;
-            double spp,spm;
-
-            // model error
-            for ( int ij = 1 ; ij < 9; ij ++) {
-                double dfx = delta_xf[ij];
-                if (dfx > 0.)
-                    smp += dfx*dfx;
-                else
-                    smm += dfx*dfx;
-            }	
-
-            // parametrization error
-            double dfxpm = 0;
-            double dfxmm = 0;
-            for ( int ij = 9 ; ij < delta_xf.size(); ij ++) {
-                double dfx = delta_xf[ij];
-                if (dfx > 0. && dfx > dfxpm)
-                {
-                    spp = dfx*dfx;
-                    dfxpm = dfx;
-                }
-                else if ( dfx < 0. && dfx < dfxmm)
-                {
-                    spm = dfx*dfx;
-                    dfxmm = dfx;
-                }
-            }	
-
-            // add
-            xerror.central = grid_central -> xfxQ(i,x,q);
-            xerror.errplus = sqrt(smp+spp);
-            xerror.errminus = sqrt(smm+spm);
-            xerror.errsymm = max(xerror.errplus,xerror.errminus);
-        } else 
-            xerror = set->uncertainty(xf,error_band);
-
-		xer_arr.push_back(xerror);
-		xpdf_arr.push_back(xf);
-		parton_num[i] = xer_arr.size()-1;
-    } // end of quark loop
-
-    // Gluon
-    vector<double> xg;
-    vector<double> delta_xg;
-    string xt = "nearest";
-    LHAPDF::GridPDF* grid_central = dynamic_cast<LHAPDF::GridPDF*>(pdfs[0]);
-    grid_central -> setExtrapolator(xt);
-
-    for (size_t imem=0; imem<=nmem; imem++){
-        LHAPDF::GridPDF* grid = dynamic_cast<LHAPDF::GridPDF*>(pdfs[imem]);
-        grid -> setExtrapolator(xt);
-        double hij =  pdfs[imem] -> xfxQ(21, x, q) - pdfs[0] -> xfxQ(21,x,q);
-        delta_xg.push_back(hij);
-        xg.push_back(pdfs[imem] -> xfxQ(21, x, q));
-    }
-
-    LHAPDF::PDFUncertainty xerror;
-
-    if ( is_var ){
-        double smp = 0.;
-        double smm = 0.;
-        double spp,spm;
-        // model error
-        for ( int ij = 1 ; ij < 9; ij ++) {
-            double dfx = delta_xg[ij];
-            if (dfx > 0.)
-                smp += dfx*dfx;
-            else
-                smm += dfx*dfx;
-        }	
-        // parametrization error
-        double dfxpm = 0;
-        double dfxmm = 0;
-        for ( int ij = 9 ; ij < delta_xg.size(); ij ++) {
-            double dfx = delta_xg[ij];
-            if (dfx > 0. && dfx > dfxpm)
-            {
-                spp = dfx*dfx;
-                dfxpm = dfx;
-            }
-            else if ( dfx < 0. && dfx < dfxmm)
-            {
-                spm = dfx*dfx;
-                dfxmm = dfx;
-            }
-        }	
-        xerror.central = grid_central -> xfxQ(21,x,q);
-        xerror.errplus = sqrt(smp+spp);
-        xerror.errminus = sqrt(smm+spm);
-        xerror.errsymm = max(xerror.errplus,xerror.errminus);
-    } else 
-        xerror = set->uncertainty(xg,error_band);
-
-	xer_arr.push_back(xerror);
-	xpdf_arr.push_back(xg);
-	parton_num[21] = xer_arr.size()-1;
-
-    vector<vector<double>> cor_mt;
-    //if (a!==0){
-	    for(int kk = 0 ; kk < xpdf_arr.size(); kk++){
-	    	vector<double> cor_v;
-	    	for(int jj = 0 ; jj < xpdf_arr.size(); jj++){
-	    		if (jj == kk || is_var)
-	    			cor_v.push_back(0.0);
-	    		else
-	    			cor_v.push_back(set->correlation(xpdf_arr[kk],xpdf_arr[jj]));
-	    	}
-	    	cor_mt.push_back(cor_v);
-	    }
-   //}
-      std::cout << xpdf_arr.size() << std::endl;
-      std::cout << xpdf_arr[0].size() << std::endl;
-   for( int p : partons){
-     std::cout << " ppdf " << p << " " << xpdf_arr[p][0];
-   }
-   std::cout << std::endl;
-    return SigR_Nu_LO(x, y, xer_arr, cor_mt, a);
-}
-*/
-
 //==================================================================================
 // SET OPTIONS 
 //==================================================================================
@@ -921,7 +780,23 @@ double LHAXS::FL_TMC(double x, double q2){
     double r  = R(x, q2);
     return r*r*F2_TMC(x,q2) - 2.*x*F1_TMC(x,q2);
 }
-// helper functions
+
+double LHAXS::KernelXS_TMC(double * k){
+  double x = k[0];
+  double y = k[1];
+  double q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
+
+  //Following HEP PH 0407371 Eq. (7)
+  double h = x*y + d_lepton;
+  double cc = (1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton;
+  if ( cc > 0.)
+      return 0.;
+  return SigRed_TMC(x,y,q2);
+}
+
+//==================================================================================
+// INTEGRATORS
+//==================================================================================
 
 double LHAXS::KernelXS(double * k,int a){
   if (!ienu)
@@ -991,19 +866,6 @@ double LHAXS::KernelXS(double * k){
   return x*y*norm*Evaluate(Q2, x, y);
 }
 
-double LHAXS::KernelXS_TMC(double * k){
-  double x = k[0];
-  double y = k[1];
-  double q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
-
-  //Following HEP PH 0407371 Eq. (7)
-  double h = x*y + d_lepton;
-  double cc = (1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton;
-  if ( cc > 0.)
-      return 0.;
-  return SigRed_TMC(x,y,q2);
-}
-
 double LHAXS::KernelXS_dsdyVar(double logx){
     double x = exp(x);
     double s = 2.*M_iso*ENU + SQ(M_iso);
@@ -1030,6 +892,8 @@ double LHAXS::KernelXS_dsdy(double logx){
 
     return x * norm * Evaluate (q2, x, Y);
 }
+
+// THIS FUNCTIONS RETURN THE DIFFERENTIAL CROSS SECTION
 
 double LHAXS::dsdyVar(double y){
     gsl_integration_workspace * w = gsl_integration_workspace_alloc (5000);
@@ -1060,6 +924,8 @@ double LHAXS::dsdy(double y){
 
     return result;
 }
+
+// THIS FUNCTIONS RETURN THE TOTAL CROSS SECTION
 
 double LHAXS::totalVar(){
   double res,err;
@@ -1093,6 +959,7 @@ double LHAXS::totalVar(){
   //std::cout << "Result: " << res << std::endl;
   return res;
 }
+
 double LHAXS::total(){
   double res,err;
   const unsigned long dim = 2; int calls = 50000;
