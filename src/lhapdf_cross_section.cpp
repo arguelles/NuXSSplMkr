@@ -948,8 +948,8 @@ double LHAXS::KernelXS(double * k,int a){
 }
 
 double LHAXS::KernelXSVar(double * k){
-  double x = k[0];
-  double y = k[1];
+  double x = exp(k[0]);
+  double y = exp(k[1]);
   double Q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
 
   double denum    = SQ(1. + Q2/M_boson2);
@@ -965,14 +965,14 @@ double LHAXS::KernelXSVar(double * k){
         return 0.;
   }
   if(ivar==0)//central set
-    return norm*Evaluate(Q2, x, y);
+    return x*y*norm*Evaluate(Q2, x, y);
   else
-    return norm*Evaluate(Q2, x, y, ivar);
+    return x*y*norm*Evaluate(Q2, x, y, ivar);
 }
 
 double LHAXS::KernelXS(double * k){
-  double x = k[0];
-  double y = k[1];
+  double x = exp(k[0]);
+  double y = exp(k[1]);
   double Q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
 
   double denum    = SQ(1. + Q2/M_boson2);
@@ -987,7 +987,8 @@ double LHAXS::KernelXS(double * k){
     if ((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.)
         return 0.;
   }
-  return norm*Evaluate(Q2, x, y);
+  // x*y is the jacobian
+  return x*y*norm*Evaluate(Q2, x, y);
 }
 
 double LHAXS::KernelXS_TMC(double * k){
@@ -1004,7 +1005,8 @@ double LHAXS::KernelXS_TMC(double * k){
   return SigRed_TMC(x,y,q2);
 }
 
-double LHAXS::KernelXS_dsdyVar(double x){
+double LHAXS::KernelXS_dsdyVar(double logx){
+    double x = exp(x);
     double s = 2.*M_iso*ENU + SQ(M_iso);
     //cout << s << " " << x << " " << Y_EMU << endl;
     double q2 = s*x*Y;
@@ -1015,10 +1017,11 @@ double LHAXS::KernelXS_dsdyVar(double x){
 
     //std::cout << norm * Evaluate(q2, x, Y, ivar) << std::endl;
     //std::cout << Evaluate(q2, x, Y, ivar) << std::endl;
-    return norm * Evaluate(q2, x, Y, ivar);
+    return x * norm * Evaluate(q2, x, Y, ivar);
 }
 
-double LHAXS::KernelXS_dsdy(double x){
+double LHAXS::KernelXS_dsdy(double logx){
+    double x = exp(x);
     double s = 2.*M_iso*ENU + SQ(M_iso);
     //cout << s << " " << x << " " << Y_EMU << endl;
     double q2 = s*x*Y;
@@ -1028,7 +1031,7 @@ double LHAXS::KernelXS_dsdy(double x){
 
     d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
-    return norm * Evaluate (q2, x, Y);
+    return x * norm * Evaluate (q2, x, Y);
 }
 
 double LHAXS::dsdyVar(double y){
@@ -1040,7 +1043,7 @@ double LHAXS::dsdyVar(double y){
     F.params = this;
     // set y
     Y = y;
-    gsl_integration_qag ( &F, 0, 1, 0, 1.e-5, 5000, 6, w, &result, &error);
+    gsl_integration_qag ( &F, log(1.e-7), log(1.), 0, 1.e-5, 5000, 6, w, &result, &error);
     gsl_integration_workspace_free(w);
 
     return result;
@@ -1055,7 +1058,7 @@ double LHAXS::dsdy(double y){
     F.params = this;
     // set y
     Y = y;
-    gsl_integration_qag ( &F, 0, 1, 0, 1.e-5, 5000, 6, w, &result, &error);
+    gsl_integration_qag ( &F, log(1.e-7), log(1.), 0, 1.e-5, 5000, 6, w, &result, &error);
     gsl_integration_workspace_free(w);
 
     return result;
@@ -1064,8 +1067,8 @@ double LHAXS::dsdy(double y){
 double LHAXS::totalVar(){
   double res,err;
   const unsigned long dim = 2; int calls = 50000;
-  double xl[dim] = {  0.0 , 0.0 };
-  double xu[dim] = {  1.0 , 1.0 };
+  double xl[dim] = { log(1.e-7) , log(1.e-7) };
+  double xu[dim] = { log(1.) , log(1.)};
 
   gsl_rng_env_setup ();
   const gsl_rng_type *T = gsl_rng_default;
@@ -1096,8 +1099,9 @@ double LHAXS::totalVar(){
 double LHAXS::total(){
   double res,err;
   const unsigned long dim = 2; int calls = 50000;
-  double xl[dim] = {  0.0 , 0.0 };
-  double xu[dim] = {  1.0 , 1.0 };
+  // integrating on the log of x and y
+  double xl[dim] = { log(1.e-7) , log(1.e-7) };
+  double xu[dim] = { log(1.) , log(1.)};
 
   gsl_rng_env_setup ();
   const gsl_rng_type *T = gsl_rng_default;
