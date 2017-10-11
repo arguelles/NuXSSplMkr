@@ -63,7 +63,7 @@ int main(int argc, char* argv[]){
 
   for (NeutrinoType neutype : {neutrino,antineutrino}){
       xs_obj.Set_CP_factor(CP_factor[neutype]);
-      // neutrino = 1., antineutrino = -1
+      // neutrino = 1., antineutrino = -
       std::string filename_dsdxdy = static_cast<std::string>(SAVE_PATH) + "dsdxdy-"+NeutrinoTypeLabel[neutype]+"-N-cc-"+pdfname+"_variations.dat";
       std::string filename_dsdy = static_cast<std::string>(SAVE_PATH) + "dsdy-"+NeutrinoTypeLabel[neutype]+"-N-cc-"+pdfname+"_variations.dat";
 
@@ -87,9 +87,7 @@ int main(int argc, char* argv[]){
               }
               outputfile_dsdxdy << std::endl;
           }
-          //double dsigdy = xs_obj.dsdy(x,PDFVarIndex[pdfvar])/cm2;
           double dsigdy = 0.;
-          //outputfile_dsdy << enu << "\t"<< x << "\t" << dsigdy << std::endl;
         }
       }
 

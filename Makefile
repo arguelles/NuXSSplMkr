@@ -70,5 +70,4 @@ bin/nu_cross_full_a_la_aaron_tau.exe: src/lhapdf_cross_section.o src/physconst.o
 	$(CXX) $(CXX_FLAGS) -c $< -o $@
 
 clean:
-	rm src/*.o
-# bin2/*.exe
+	rm src/*.o bin/*.exe

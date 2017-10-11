@@ -102,8 +102,8 @@ class LHAXS{
         double KernelXS_dsdyVar(double y);
         double KernelXS(double*);
         double KernelXS(double*,int);
-    protected:
         double KernelXSVar(double*);
+    protected:
         double KernelXS_TMC(double*);
         template<double (LHAXS::*f)(double*)>
         double VegasIntegratorXS();
