@@ -121,9 +121,9 @@ int main(int argc, char* argv[]){
           double sigma = xs_obj.total();
           outputfile_sigma << enu << "\t"<< sigma/cm2 << std::endl;
           for ( double enu2 : e_range){
-            double y = enu2/enu;
+            double y = 1. - enu2/enu;
             double dsigdy=0;
-            if (y < 1.)
+            if (y > 0.)
               dsigdy = xs_obj.dsdy(y)/cm2;
             outputfile_dsdy << dsigdy/enu << "\t";
           }

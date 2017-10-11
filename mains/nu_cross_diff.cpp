@@ -115,9 +115,9 @@ int main(int argc, char* argv[]){
         for( double enu : e_range){
           xs_obj.Set_Neutrino_Energy(enu*pc->GeV);
           for ( double enu2 : e_range){
-            double y = enu2/enu;
+            double y = 1. - enu2/enu;
             double dsigdy=0;
-            if (y < 1.)
+            if (y > 0. )
               dsigdy = xs_obj.dsdyVar(y)/cm2;
             outputfile_dsdy << dsigdy/enu << "\t";
             //std::cout << enu << "  " << enu2 << " " << dsigdy/enu << std::endl;
