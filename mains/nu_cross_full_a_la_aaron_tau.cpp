@@ -107,12 +107,12 @@ int main(int argc, char* argv[]){
 
   double cm2 = SQ(pc->cm);
 
-  for (Current IT : {CC,NC}) {
+  for (Current IT : {CC}) {
     xs_obj.Set_InteractionType(IT);
     for (NeutrinoType neutype : {neutrino,antineutrino}){
       xs_obj.Set_CP_factor(CP_factor[neutype]);
-      //for (PDFVar pdfvar : {central}){
-      for (PDFVar pdfvar : {central,minus,plus}){
+      for (PDFVar pdfvar : {central}){
+      //for (PDFVar pdfvar : {central,minus,plus}){
         std::cout << "BEGIN sigma-"+NeutrinoTypeLabel[neutype]+"-N-"+IntTypeLabel[IT]+"-"+pdfname+"_"+PDFVarLabel[pdfvar]+".dat" << std::endl;
         xs_obj.Set_Variant(PDFVarIndex[pdfvar]);
         // neutrino = 1., antineutrino = -1
@@ -122,12 +122,8 @@ int main(int argc, char* argv[]){
         ofstream outputfile_dsdy(filename_dsdy.c_str());
         ofstream outputfile_sigma(filename_sigma.c_str());
 
-        //for (double logenu=0;logenu<=7.;logenu+=0.05){
-        //  double enu = pow(10, logenu);
         for( double enu : e_range){
           xs_obj.Set_Neutrino_Energy(enu*pc->GeV);
-          //for (double logenu2=0;logenu2<=7.;logenu2+=0.05){
-          //  double enu2= pow(10, logenu2);
           for ( double enu2 : e_range){
             double y = 1. - enu2/enu;
             double dsigdy=0;
