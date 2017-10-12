@@ -1,7 +1,7 @@
 #include "lhapdf_cross_section.h"
 
 //#define SINGLE_ENERGY_TEST
-#define SAVE_PATH "/home/carguelles/NuXSSplMkr/data/newxs/"
+#define SAVE_PATH "./"
 
 int main(int argc, char* argv[]){
 
@@ -122,18 +122,19 @@ int main(int argc, char* argv[]){
         ofstream outputfile_dsdy(filename_dsdy.c_str());
         ofstream outputfile_sigma(filename_sigma.c_str());
 
-        for( double enu : e_range){
+        for (double enu : e_range){
+          std::cout << "Doing energy: " << enu << " GeV" << std::endl;
           xs_obj.Set_Neutrino_Energy(enu*pc->GeV);
-          for ( double enu2 : e_range){
+          double sigma = xs_obj.total();
+          outputfile_sigma << enu << "\t"<< sigma/cm2 << std::endl;
+          for (double enu2 : e_range){
             double y = 1. - enu2/enu;
             double dsigdy=0;
             if (y > 0.)
-              dsigdy = xs_obj.dsdyVar(y)/cm2;
+              dsigdy = xs_obj.dsdy(y)/cm2;
             outputfile_dsdy << dsigdy/enu << "\t";
           }
           outputfile_dsdy << endl;
-          double sigma = xs_obj.totalVar();
-          outputfile_sigma << enu << "\t"<< sigma/cm2 << std::endl;
         }
 
         outputfile_dsdy.close();
