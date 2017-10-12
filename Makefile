@@ -15,7 +15,6 @@ INCLUDE_PATH  	+= -I$(CURRENT_DIR)/inc
 INCLUDE_PATH  	+= -I$(CURRENT_DIR)/inc/Dipole_models
 INCLUDE_PATH  	+= -I$(LHAPDF)/include
 INCLUDE_PATH  	+= -I$(BOOST)/include
-INCLUDE_PATH    += -I$(PHOTOSPLINE)/include
 
 #Compiler
 CC 		= clang
@@ -31,7 +30,6 @@ LD_FLAGS 	= -L/usr/local/lib/ -L/usr/lib -L$(LHAPDF)/lib -L$(BOOST)/lib -L$(PHOT
 LD_FLAGS 	+= -lLHAPDF
 LD_FLAGS 	+= -lgsl -lgslcblas
 LD_FLAGS	+= -lboost_system -lboost_iostreams -lboost_filesystem -lboost_regex
-LD_FLAGS	+= -lphotospline
 
 .PHONY: all clean
 

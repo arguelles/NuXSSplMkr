@@ -847,7 +847,6 @@ double LHAXS::KernelXS(double * k){
 
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
-  //std::cout << Evaluate(Q2, x, y, 0) << std::endl;
 
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
