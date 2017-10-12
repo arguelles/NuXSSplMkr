@@ -870,6 +870,9 @@ double LHAXS::KernelXS_dsdyVar(double logx){
     double norm = GF2*M_iso*ENU/(2.*M_PI*denum);
     d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
+  if(ivar==0)//central set
+    return x * norm * Evaluate(q2, x, Y);
+  else
     return x * norm * Evaluate(q2, x, Y, ivar);
 }
 

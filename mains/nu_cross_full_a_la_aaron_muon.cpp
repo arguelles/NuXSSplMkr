@@ -105,8 +105,8 @@ int main(int argc, char* argv[]){
     xs_obj.Set_InteractionType(IT);
     for (NeutrinoType neutype : {neutrino,antineutrino}){
       xs_obj.Set_CP_factor(CP_factor[neutype]);
-      for (PDFVar pdfvar : {central}){
-      //for (PDFVar pdfvar : {central,minus,plus}){
+      //for (PDFVar pdfvar : {central}){
+      for (PDFVar pdfvar : {central,minus,plus}){
         xs_obj.Set_Variant(PDFVarIndex[pdfvar]);
         std::cout << "BEGIN sigma-"+NeutrinoTypeLabel[neutype]+"-N-"+IntTypeLabel[IT]+"-"+pdfname+"_"+PDFVarLabel[pdfvar]+".dat" << std::endl;
         std::string filename_dsdy = static_cast<std::string>(SAVE_PATH) + "dsdE-"+NeutrinoTypeLabel[neutype]+"-N-"+IntTypeLabel[IT]+"-"+pdfname+"_"+PDFVarLabel[pdfvar]+".dat";
@@ -118,13 +118,13 @@ int main(int argc, char* argv[]){
         for( double enu : e_range){
           std::cout << "Doing energy: " << enu << " GeV" << std::endl;
           xs_obj.Set_Neutrino_Energy(enu*pc->GeV);
-          double sigma = xs_obj.total();
+          double sigma = xs_obj.totalVar();
           outputfile_sigma << enu << "\t"<< sigma/cm2 << std::endl;
           for ( double enu2 : e_range){
             double y = 1. - enu2/enu;
             double dsigdy=0;
             if (y > 0.)
-              dsigdy = xs_obj.dsdy(y)/cm2;
+              dsigdy = xs_obj.dsdyVar(y)/cm2;
             outputfile_dsdy << dsigdy/enu << "\t";
           }
           outputfile_dsdy << endl;
