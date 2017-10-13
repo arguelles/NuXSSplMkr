@@ -490,8 +490,8 @@ double LHAXS::Evaluate (double Q2, double x, double y, int a){
     double q = sqrt(Q2)/pc->GeV;
     map<int,vector<double>> xpdf_arr;
     map<int,LHAPDF::PDFUncertainty> xer_arr;
-    vector<double> xf(nmem);
-    vector<double> delta_xf(nmem);
+    vector<double> xf(nmem+1);
+    vector<double> delta_xf(nmem+1);
     int gluon_index = 21;
 
     //Quark Flavors
@@ -557,8 +557,8 @@ double LHAXS::Evaluate (double Q2, double x, double y, int a){
     } // end of quark loop
 
     // Gluon
-    vector<double> xg(nmem);
-    vector<double> delta_xg(nmem);
+    vector<double> xg(nmem+1);
+    vector<double> delta_xg(nmem+1);
     string xt = "nearest";
     LHAPDF::GridPDF* grid_central = dynamic_cast<LHAPDF::GridPDF*>(pdfs[0]);
     grid_central -> setExtrapolator(xt);
@@ -567,8 +567,8 @@ double LHAXS::Evaluate (double Q2, double x, double y, int a){
         LHAPDF::GridPDF* grid = dynamic_cast<LHAPDF::GridPDF*>(pdfs[imem]);
         grid -> setExtrapolator(xt);
         double hij =  pdfs[imem] -> xfxQ(gluon_index, x, q) - pdfs[0] -> xfxQ(gluon_index,x,q);
-        delta_xg.push_back(hij);
-        xg.push_back(pdfs[imem] -> xfxQ(gluon_index, x, q));
+        delta_xg[imem]=(hij);
+        xg[imem]=(pdfs[imem] -> xfxQ(gluon_index, x, q));
     }
 
     LHAPDF::PDFUncertainty xerror;
