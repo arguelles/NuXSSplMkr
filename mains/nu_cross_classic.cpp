@@ -44,10 +44,10 @@ int main(int argc, char* argv[]){
           for (double logx=-5.;logx<0.;logx+=0.025){
             double x = pow(10, logx);
             for (double logy=-5.;logy<0.;logy+=0.025){
-                double y = pow(10, logy);
+                double y = pow(10., logy);
                 double zz[2];
-                zz[0] = x;
-                zz[1] = y;
+                zz[0] = log(x);
+                zz[1] = log(y);
 
                 double dsigdxdy = xs_obj.KernelXS(zz,PDFVarIndex[pdfvar])/cm2;
                 outputfile_dsdxdy << enu << "\t"<< x <<  "\t" << y << "\t" << dsigdxdy << std::endl;
