@@ -1,5 +1,7 @@
 #PATHS
+ifeq ($(PREFIX),)
 PREFIX=/usr/local/
+endif
 
 CURRENT_DIR 	= $(shell pwd)
 LHAPDF      	= $(PREFIX)
