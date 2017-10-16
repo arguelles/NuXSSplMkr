@@ -105,8 +105,8 @@ int main(int argc, char* argv[]){
     xs_obj.Set_InteractionType(IT);
     for (NeutrinoType neutype : {neutrino,antineutrino}){
       xs_obj.Set_CP_factor(CP_factor[neutype]);
-      //for (PDFVar pdfvar : {central}){
-      for (PDFVar pdfvar : {minus,plus}){
+      for (PDFVar pdfvar : {central}){
+      //for (PDFVar pdfvar : {minus,plus}){
         xs_obj.Set_Variant(PDFVarIndex[pdfvar]);
         std::cout << "BEGIN sigma-"+NeutrinoTypeLabel[neutype]+"-N-"+IntTypeLabel[IT]+"-"+pdfname+"_"+PDFVarLabel[pdfvar]+".dat" << std::endl;
         std::string filename_dsdy = static_cast<std::string>(SAVE_PATH) + "dsdE-"+NeutrinoTypeLabel[neutype]+"-N-"+IntTypeLabel[IT]+"-"+pdfname+"_"+PDFVarLabel[pdfvar]+".dat";
