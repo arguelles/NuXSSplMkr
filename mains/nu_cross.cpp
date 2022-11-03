@@ -22,10 +22,11 @@ int main(int argc, char* argv[]){
   PhysConst * pc = new PhysConst();
 
   // Get arguments
-  string pdfname = (string) argv[1];
+  std::string pdfname = (string) argv[1];
   double mass_double = atof(argv[2])/1000;  // mass must be given in MeV
-  string mass_string = (string) argv[2];
-  // string mass_string = std::format("{:04}", (string) argv[2]);
+  std::ostringstream ss;
+  ss << std::setw(4) << std::setfill('0') << (string) argv[2];
+  std::string mass_string = ss.str();
   LHAXS xs_obj(pdfname);
 
   //enum IntType {CC,NC};
@@ -78,6 +79,8 @@ int main(int argc, char* argv[]){
       xs_obj.Set_CP_factor(CP_factor[neutype]);
       for (PDFVar pdfvar : {central}){
         std::string filename_dsdxdy = static_cast<std::string>(SAVE_PATH)+"M_"+mass_string+"MeV/dsdxdy-"+NeutrinoTypeLabel[neutype]+"-N-"+IntTypeLabel[IT]+"-"+pdfname+"_"+PDFVarLabel[pdfvar]+".dat";
+
+        std::cout << "Filename: " << filename_dsdxdy << std::endl;
 
         ofstream outputfile_dsdxdy(filename_dsdxdy.c_str());
 

@@ -26,7 +26,7 @@ LHAXS::LHAXS(std::string PDFname){
     //error_band = 68;
 
     // fundamental couplings
-    s_w = 0.2223; // sin^2(weak_angle)
+    s_w = 0.2229; // sin^2(weak_angle) from CODATA 2018
     Lu2 = ( 1. - (4./3.)*s_w) * ( 1. - (4./3.)*s_w);
     Ld2 = (-1. + (2./3.)*s_w) * (-1. + (2./3.)*s_w);
     Ru2 = (    - (4./3.)*s_w) * (    - (4./3.)*s_w);
@@ -358,6 +358,9 @@ map<int,double> LHAXS::PDFExtract(double x, double q2){
 }
 
 double LHAXS::SigRed_Evaluate(double q2, double x, double y){
+
+    d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
+
     //Take this representation of q !!
     double y_p = (1. - d_lepton / x) + (1.- d_lepton/x - y) * (1. - y);
     double y_m = (1. - d_lepton / x) - (1.- d_lepton/x - y) * (1. - y);
@@ -408,6 +411,8 @@ double LHAXS::SigR_Nu_LO_NC(double x,double y, map<int, double> xq_arr){
 
 double LHAXS::SigR_Nu_LO(double x, double y, map<int,double> xq_arr){
 	double k = 0.;
+
+  d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
 	double y_p = (1. - d_lepton / x) + (1.- d_lepton/x - y) * (1. - y);
 	double y_m = (1. - d_lepton / x) - (1.- d_lepton/x - y) * (1. - y);
@@ -776,11 +781,13 @@ double LHAXS::KernelXS_TMC(double * k){
   double y = k[1];
   double q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
 
+  d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
+
   //Following HEP PH 0407371 Eq. (7)
   double h = x*y + d_lepton;
-  double cc = (1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton;
-  if ( cc > 0.)
+  if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
       return 0.;
+  }
   return SigRed_TMC(x,y,q2);
 }
 
@@ -802,10 +809,11 @@ double LHAXS::KernelXS(double * k,int a){
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
   //if(INT_TYPE==CC){
-    double h = x*y + d_lepton;
-    if((1. + x*d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
-        return 0.;
-    }
+  //Following HEP PH 0407371 Eq. (7)
+  double h = x*y + d_lepton;
+  if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
+      return 0.;
+  }
   //}
   return x * y * norm*Evaluate(Q2, x, y, a);
 }
@@ -822,10 +830,11 @@ double LHAXS::KernelXSVar(double * k){
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
   //if(INT_TYPE==CC){
-    //Following HEP PH 0407371 Eq. (7)
-    double h = x*y + d_lepton;
-    if ((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.)
-        return 0.;
+  //Following HEP PH 0407371 Eq. (7)
+  double h = x*y + d_lepton;
+  if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
+      return 0.;
+  }
   //}
   if(ivar==0)//central set
     return x*y*norm*Evaluate(Q2, x, y);
@@ -843,11 +852,12 @@ double LHAXS::KernelXS(double * k){
 
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
-  //Following HEP PH 0407371 Eq. (7)
   //if(INT_TYPE==CC){
-    double h = x*y + d_lepton;
-    if ((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.)
-        return 0.;
+  //Following HEP PH 0407371 Eq. (7)
+  double h = x*y + d_lepton;
+  if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
+      return 0.;
+  }
   //}
   // x*y is the jacobian
   return x*y*norm*Evaluate(Q2, x, y);
@@ -861,7 +871,6 @@ double LHAXS::KernelXS_dsdyVar(double logx){
 
     double denum = SQ(1. + q2/M_boson2);
     double norm = GF2*M_iso*ENU/(2.*M_PI*denum);
-    d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
   if(ivar==0)//central set
     return x * norm * Evaluate(q2, x, Y);
@@ -877,8 +886,6 @@ double LHAXS::KernelXS_dsdy(double logx){
 
     double denum = SQ(1. + q2/M_boson2);
     double norm = GF2*M_iso*ENU/(2.*M_PI*denum);
-
-    d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
     return x * norm * Evaluate (q2, x, Y);
 }
