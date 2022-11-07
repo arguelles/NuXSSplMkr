@@ -5,25 +5,11 @@
 
 int main(int argc, char* argv[]){
 
-//#ifndef SINGLE_ENERGY_TEST
-//  if(argc != 2){
-//    cerr << "Argument number not valid! Given: " <<  argc << endl;
-//    cerr << "Usage: pdfname " << endl;
-//    return 1;
-//  }
-//#else
-//  if(argc != 5){
-//    cerr << "Argument number not valid! Given: " <<  argc << endl;
-//    cerr << "Usage: pdfname enu x y" << endl;
-//    return 1;
-//  }
-//#endif
-
   PhysConst * pc = new PhysConst();
 
   // Get arguments
   std::string pdfname = (string) argv[1];
-  double mass_double = atof(argv[2])/1000;  // mass must be given in MeV
+  double mass_double = atof(argv[2])/1000.;  // mass must be given in MeV
   std::ostringstream ss;
   ss << std::setw(4) << std::setfill('0') << (string) argv[2];
   std::string mass_string = ss.str();
@@ -60,14 +46,18 @@ int main(int argc, char* argv[]){
         //std::string filename_dsdy = static_cast<std::string>(SAVE_PATH) + "dsdy-"+NeutrinoTypeLabel[neutype]+"-N-"+IntTypeLabel[IT]+"-"+pdfname+"_"+PDFVarLabel[pdfvar]+".dat";
         std::string filename_sigma = static_cast<std::string>(SAVE_PATH)+"M_"+mass_string+"MeV/sigma-"+NeutrinoTypeLabel[neutype]+"-N-"+IntTypeLabel[IT]+"-"+pdfname+"_"+PDFVarLabel[pdfvar]+".dat";
 
-        std::cout << "Filename: " << filename_dsdxdy << std::endl;
+        std::cout << "Filename: " << filename_sigma << std::endl;
 
         //ofstream outputfile_dsdy(filename_dsdy.c_str());
         ofstream outputfile_sigma(filename_sigma.c_str());
 
         for (double logenu=0.;logenu<=7.;logenu+=0.05){
           double enu = pow(10, logenu);
+          if (enu < mass_double) {
+            continue;
+          }
           xs_obj.Set_Neutrino_Energy(enu*pc->GeV);
+
           //for (double logx=-5.;logx<0.;logx+=0.025){
           //  double x = pow(10, logx);
           //  // here x is really y :).
