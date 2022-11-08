@@ -1,19 +1,19 @@
+#!/bin/sh /cvmfs/icecube.opensciencegrid.org/users/BeyondStandardModel/bsm-py2-v3.1.1/icetray-start-standard
+#METAPROJECT /data/user/lfischer/software/oscnext_hnl/build/
+
 import numpy
 import operator
 import re
 import warnings
 
-# Fast sparse-matrix implementation
-#from icecube.photospline import spglam as glam 
-#from icecube.photospline.glam.glam import grideval
-#from icecube.photospline.glam.bspline import bspline
-#from icecube.photospline import splinefitstable
+from glob import glob
 
 # Fast sparse-matrix implementation
-from photospline import spglam as glam
-from photospline.glam.glam import grideval
-from photospline.glam.bspline import bspline
-from photospline import splinefitstable
+from icecube.photospline import spglam as glam
+from icecube.photospline.glam.glam import grideval
+from icecube.photospline.glam.bspline import bspline
+from icecube.photospline import splinefitstable
+
 import os
 
 """
@@ -25,7 +25,7 @@ C.A. Arguelles Delgado - aug.03.14
 
 def ModLog10(x):
     if x <= 0. :
-        print x
+        # print(x)
         return -50
     else:
         return numpy.log10(x)
@@ -35,7 +35,7 @@ ModLog10 = numpy.vectorize(ModLog10)
 def SplineFitMaker1D(filename, scale = 'lin', prefix = '', skip_header = 0, column = 1, N = 50, outname = "", oscale = 'lin'):
     """
     Creates a spline table from a table of numbers. Then
-    saves the table using the sanem filename as given.
+    saves the table using the same filename as given.
 
     Options:
     scale : linear or log. For logbicubic splines or simple bicubic splines
@@ -44,7 +44,7 @@ def SplineFitMaker1D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
     column : z = f(x), asummes x to be the first column.
     """
     if(column < 1):
-        print "Error: column < 1."
+        print("Error: column < 1.")
         exit()
 
     datas = numpy.loadtxt(filename, skiprows = skip_header)
@@ -55,7 +55,7 @@ def SplineFitMaker1D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
     elif scale == "lin":
         pass
     else:
-        print "Error: unknown scale."
+        print("Error: unknown scale.")
         exit()
 
     of = lambda x : x;
@@ -64,7 +64,7 @@ def SplineFitMaker1D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
     elif oscale == "lin":
         pass
     else:
-        print "Error: unknown scale."
+        print("Error: unknown scale.")
         exit()
 
     #shape = tuple(numpy.unique(datas[:,i]).size for i in range(2))
@@ -76,6 +76,7 @@ def SplineFitMaker1D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
     knots = [numpy.linspace(x.min()-1,x.max()+1,N,endpoint = True)]
     order = 2
     smooth = 1.0e-15
+    # penaltyorder = 2
 
     weight = numpy.ones(z.shape)
     result = glam.fit(z,weight,[x],knots,order,smooth)
@@ -90,7 +91,7 @@ def SplineFitMaker1D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
         os.unlink(prefix+nfilename)
     # this file can later be loaded and evaluated with the photospline C library
     splinefitstable.write(result, prefix+nfilename)
-    print "Done. Generated :"  + prefix+nfilename
+    print("Done. Generated :"  + prefix+nfilename)
 
 def SplineFitMaker2D(filename, scale = 'lin', prefix = '', skip_header = 0, column = 2, N = 50, outname = ""):
     """
@@ -104,7 +105,7 @@ def SplineFitMaker2D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
     column : z = f(x,y), asummes x y to be the first two columns.
     """
     if(column < 2):
-        print "Error: column < 2."
+        print("Error: column < 2.")
         exit()
 
     datas = numpy.loadtxt(filename, skiprows = skip_header)
@@ -115,7 +116,7 @@ def SplineFitMaker2D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
     elif scale == "lin":
         pass
     else:
-        print "Error: unknown scale."
+        print("Error: unknown scale.")
         exit()
 
     shape = tuple(numpy.unique(datas[:,i]).size for i in range(2))
@@ -130,6 +131,7 @@ def SplineFitMaker2D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
     order = 2
     #smooth = 1.0e-5
     smooth = 1.0e-15
+    # penaltyorder = 2
 
     weight = numpy.ones(z.shape)
     #weight = 1+zz
@@ -145,7 +147,7 @@ def SplineFitMaker2D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
         os.unlink(prefix+nfilename)
     # this file can later be loaded and evaluated with the photospline C library
     splinefitstable.write(result, prefix+nfilename)
-    print "Done. Generated :"  + prefix+nfilename
+    print("Done. Generated :"  + prefix+nfilename)
 
 def SplineFitMaker3D(filename, scale = 'lin', prefix = '', skip_header = 0, column = 2, N = 50, outname = "", oscale = 'lin'):
     """
@@ -159,7 +161,7 @@ def SplineFitMaker3D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
     column : z = f(x,y,w), asummes x/y/w to be the first/second/third column.
     """
     if(column < 3):
-        print "Error: column < 3."
+        print("Error: column < 3.")
         exit()
 
     datas = numpy.loadtxt(filename, skiprows = skip_header)
@@ -170,7 +172,7 @@ def SplineFitMaker3D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
     elif scale == "lin":
         pass
     else:
-        print "Error: unknown scale."
+        print("Error: unknown scale.")
         exit()
 
     of = lambda x : x;
@@ -179,7 +181,7 @@ def SplineFitMaker3D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
     elif oscale == "lin":
         pass
     else:
-        print "Error: unknown scale."
+        print("Error: unknown scale.")
         exit()
 
     shape = tuple(numpy.unique(datas[:,i]).size for i in range(3))
@@ -197,6 +199,7 @@ def SplineFitMaker3D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
     order = 2
     #smooth = 1.0e-5
     smooth = 1.0e-15
+    # penaltyorder = 2
 
     weight = numpy.ones(z.shape)
     #weight = 1+zz
@@ -212,47 +215,39 @@ def SplineFitMaker3D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
         os.unlink(prefix+nfilename)
     # this file can later be loaded and evaluated with the photospline C library
     splinefitstable.write(result, prefix+nfilename)
-    print "Done. Generated :"  + prefix+nfilename
+    print("Done. Generated :"  + prefix+nfilename)
 
 if __name__ == "__main__":
-    inpath = "/home/carguelles/NuXSSplMkr/data/newxs_2017/"
-    outpath = "/home/carguelles/NuXSSplMkr/fits/newxs_2017/"
+    inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/HNL/"
+    inpaths = glob(os.path.join(inpath_base, 'M_*'))
+    print('All input directories:\n', inpaths)
 
-    neutrino_type = ['numu','numubar']
+    # neutrino_type = ['numu','numubar']
+    neutrino_type = ['nutau','nutaubar']
 
-    pdf_list = ['CT10nlo_central','CT10nlo_minus','CT10nlo_plus',
-                'HERAPDF15NLO_EIG_central','HERAPDF15NLO_EIG_minus','HERAPDF15NLO_EIG_plus',
-                'NNPDF23_nlo_as_0118_central','NNPDF23_nlo_as_0118_minus','NNPDF23_nlo_as_0118_plus']
-
-    #pdf_list = ['NNPDF23_nlo_as_0118_central','NNPDF23_nlo_as_0118_minus','NNPDF23_nlo_as_0118_plus']
     pdf_list = ['HERAPDF15NLO_EIG_central']
 
-    #pdf = "HERAPDF15NLO_EIG_central"
-    #filename = "dsdxdy-numu-N-cc-"+pdf
-    #SplineFitMaker3D(inpath + filename + ".dat", outname = filename + ".fits",
-    #        scale = 'log',prefix = outpath, N = 50, column = 3, oscale = 'log')
-#
-#    filename = "dsdxdy-numubar-N-cc-"+pdf
-#    SplineFitMaker3D(inpath + filename + ".dat", outname = filename + ".fits",
-#            scale = 'log',prefix = outpath, N = 50, column = 3, oscale = 'log' )
+    for inpath in inpaths:
+        print('This input directory:\n',inpath)
+        outpath = inpath + '/'
+        print('Outpath: {}'.format(outpath))
 
-#    quit()
-    for int_type in ["cc","nc"]:
-        for pdf in pdf_list:
-            for neutype in neutrino_type:
-                filename = "sigma-"+neutype+"-N-"+int_type+"-"+pdf
-                print "processing: "+filename
-                SplineFitMaker1D(inpath + filename + ".dat", outname = filename + ".fits",
-                        scale = 'log',prefix = outpath, N = 65, column = 1, oscale = 'log')
+        for int_type in ["cc","nc"]:
+            for pdf in pdf_list:
+                for neutype in neutrino_type:
+                    filename = "sigma-"+neutype+"-N-"+int_type+"-"+pdf
+                    print("processing: "+filename)
+                    infilepath = inpath + '/' + filename + ".dat"
+                    print('Infilepath: {}'.format(infilepath))
+                    SplineFitMaker1D(infilepath, outname = filename + ".fits",
+                            scale = 'log',prefix = outpath, N = 65, column = 1, oscale = 'log')
 
-    exit()
-
-    for int_type in ["cc","nc"]:
-        for pdf in pdf_list:
-            for neutype in neutrino_type:
-                filename = "dsdxdy-"+neutype+"-N-"+int_type+"-"+pdf
-                print "processing: "+filename
-                SplineFitMaker3D(inpath + filename + ".dat", outname = filename + ".fits",
-                        scale = 'log',prefix = outpath, N = 65, column = 3, oscale = 'log')
-
-
+        for int_type in ["cc","nc"]:
+            for pdf in pdf_list:
+                for neutype in neutrino_type:
+                    filename = "dsdxdy-"+neutype+"-N-"+int_type+"-"+pdf
+                    print("processing: "+filename)
+                    infilepath = inpath + '/' + filename + ".dat"
+                    print('Infilepath: {}'.format(infilepath))
+                    SplineFitMaker3D(infilepath, outname = filename + ".fits",
+                            scale = 'log',prefix = outpath, N = 65, column = 3, oscale = 'log')
