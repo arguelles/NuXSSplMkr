@@ -10,8 +10,8 @@ from glob import glob
 
 # Fast sparse-matrix implementation
 from icecube.photospline import spglam as glam
-from icecube.photospline.glam.glam import grideval
-from icecube.photospline.glam.bspline import bspline
+# from icecube.photospline.glam.glam import grideval
+# from icecube.photospline.glam.bspline import bspline
 from icecube.photospline import splinefitstable
 
 import os
@@ -49,7 +49,7 @@ def SplineFitMaker1D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
 
     datas = numpy.loadtxt(filename, skiprows = skip_header)
 
-    f = lambda x : x;
+    f = lambda x : x
     if scale == "log":
         f = lambda x : ModLog10(x)
     elif scale == "lin":
@@ -58,7 +58,7 @@ def SplineFitMaker1D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
         print("Error: unknown scale.")
         exit()
 
-    of = lambda x : x;
+    of = lambda x : x
     if oscale == "log":
         of = lambda x : ModLog10(x)
     elif oscale == "lin":
@@ -110,7 +110,7 @@ def SplineFitMaker2D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
 
     datas = numpy.loadtxt(filename, skiprows = skip_header)
 
-    f = lambda x : x;
+    f = lambda x : x
     if scale == "log":
         f = lambda x : ModLog10(x)
     elif scale == "lin":
@@ -166,7 +166,7 @@ def SplineFitMaker3D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
 
     datas = numpy.loadtxt(filename, skiprows = skip_header)
 
-    f = lambda x : x;
+    f = lambda x : x
     if scale == "log":
         f = lambda x : ModLog10(x)
     elif scale == "lin":
@@ -175,7 +175,7 @@ def SplineFitMaker3D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
         print("Error: unknown scale.")
         exit()
 
-    of = lambda x : x;
+    of = lambda x : x
     if oscale == "log":
         of = lambda x : ModLog10(x)
     elif oscale == "lin":
