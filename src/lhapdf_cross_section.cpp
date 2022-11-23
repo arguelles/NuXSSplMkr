@@ -779,7 +779,8 @@ double LHAXS::FL_TMC(double x, double q2){
 double LHAXS::KernelXS_TMC(double * k){
   double x = k[0];
   double y = k[1];
-  double q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
+  double s = 2.*M_iso*ENU + SQ(M_iso);
+  double Q2 = ( s - SQ(M_iso) )*x*Y;
 
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
@@ -800,7 +801,8 @@ double LHAXS::KernelXS(double * k,int a){
     throw std::runtime_error("energy not initialize");
   double x = exp(k[0]);
   double y = exp(k[1]);
-  double Q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
+  double s = 2.*M_iso*ENU + SQ(M_iso);
+  double Q2 = ( s - SQ(M_iso) )*x*Y;
 
   // same for CC and NC
   double denum    = SQ(1. + Q2/M_boson2);
@@ -821,7 +823,8 @@ double LHAXS::KernelXS(double * k,int a){
 double LHAXS::KernelXSVar(double * k){
   double x = exp(k[0]);
   double y = exp(k[1]);
-  double Q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
+  double s = 2.*M_iso*ENU + SQ(M_iso);
+  double Q2 = ( s - SQ(M_iso) )*x*Y;
 
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
@@ -845,7 +848,8 @@ double LHAXS::KernelXSVar(double * k){
 double LHAXS::KernelXS(double * k){
   double x = exp(k[0]);
   double y = exp(k[1]);
-  double Q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
+  double s = 2.*M_iso*ENU + SQ(M_iso);
+  double Q2 = ( s - SQ(M_iso) )*x*Y;
 
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
@@ -867,7 +871,7 @@ double LHAXS::KernelXS_dsdyVar(double logx){
     double x = exp(x);
     double s = 2.*M_iso*ENU + SQ(M_iso);
     //cout << s << " " << x << " " << Y_EMU << endl;
-    double q2 = s*x*Y;
+    double q2 = ( s - SQ(M_iso) )*x*Y;
 
     double denum = SQ(1. + q2/M_boson2);
     double norm = GF2*M_iso*ENU/(2.*M_PI*denum);
@@ -882,7 +886,7 @@ double LHAXS::KernelXS_dsdy(double logx){
     double x = exp(x);
     double s = 2.*M_iso*ENU + SQ(M_iso);
     //cout << s << " " << x << " " << Y_EMU << endl;
-    double q2 = s*x*Y;
+    double q2 = ( s - SQ(M_iso) )*x*Y;
 
     double denum = SQ(1. + q2/M_boson2);
     double norm = GF2*M_iso*ENU/(2.*M_PI*denum);
