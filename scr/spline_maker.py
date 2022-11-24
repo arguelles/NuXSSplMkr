@@ -10,8 +10,6 @@ from glob import glob
 
 # Fast sparse-matrix implementation
 from icecube.photospline import spglam as glam
-# from icecube.photospline.glam.glam import grideval
-# from icecube.photospline.glam.bspline import bspline
 from icecube.photospline import splinefitstable
 
 import os
@@ -219,13 +217,20 @@ def SplineFitMaker3D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
 
 if __name__ == "__main__":
     inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/HNL/"
-    inpaths = glob(os.path.join(inpath_base, 'M_*'))
+    # # take all
+    # inpaths = glob(os.path.join(inpath_base, 'M_*'))
+    # only a specific one
+    # inpaths = [os.path.join(inpath_base, 'M_0200MeV')]
+    # inpaths = [os.path.join(inpath_base, 'M_0000MeV')]
+    inpaths = [os.path.join(inpath_base, 'M_0300MeV')]
+
     print('All input directories:\n', inpaths)
 
     # neutrino_type = ['numu','numubar']
     neutrino_type = ['nutau','nutaubar']
 
-    pdf_list = ['HERAPDF15NLO_EIG_central']
+    # pdf_list = ['HERAPDF15NLO_EIG_central']
+    pdf_list = ['GRV98lo_patched_central']
 
     for inpath in inpaths:
         print('This input directory:\n',inpath)
