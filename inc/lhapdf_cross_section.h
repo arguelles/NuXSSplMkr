@@ -72,6 +72,7 @@ class LHAXS{
         double ENU = -1;
         bool ienu = false;
         bool INT_TYPE;
+        bool IS_HNL = false;
         double Mw2,Mz2, M_iso, GF2;
         double M_boson2;
         double error_band;
@@ -112,6 +113,7 @@ class LHAXS{
         void Set_M_Lepton(double);
         void Set_CP_factor(double);
         void Set_InteractionType(Current);
+        void Set_IS_HNL(bool);
         void Set_Neutrino_Energy(double);
         void Set_QCDOrder(QCDOrder);
         void Set_Variant(int);

@@ -1,7 +1,6 @@
 #include "lhapdf_cross_section.h"
 
 //#define SINGLE_ENERGY_TEST
-#define SAVE_PATH "/data/user/lfischer/software/NuXSSplMkr/data/HNL/"
 
 int main(int argc, char* argv[]){
 
@@ -10,6 +9,10 @@ int main(int argc, char* argv[]){
   // Get arguments
   std::string pdfname = (string) argv[1];
   double mass_double = atof(argv[2])/1000.;  // mass must be given in MeV
+  std::stringstream ss_bool(argv[3]);
+  bool is_hnl;
+  ss_bool >> std::boolalpha >> is_hnl;
+  std::string SAVE_PATH = (string) argv[4];
   std::ostringstream ss;
   ss << std::setw(4) << std::setfill('0') << (string) argv[2];
   std::string mass_string = ss.str();
@@ -28,9 +31,21 @@ int main(int argc, char* argv[]){
 
   // muon mass
   //xs_obj.Set_M_Lepton(0.105*xs_obj.pc->GeV);
-  // HNL mass
-  std::cout << "HNL mass: " << mass_double << std::endl;
+
+  // // HNL mass
+  // std::cout << "HNL mass: " << mass_double << std::endl;
+  // xs_obj.Set_M_Lepton(mass_double*xs_obj.pc->GeV);
+  // // set bool to use custom cross section
+  // xs_obj.Set_IS_HNL(true);
+
+
+  // automatic mass/hnl configuration
+  std::cout << "Lepton mass (still NuTau/NuTauBar primary): " << mass_double << std::endl;
   xs_obj.Set_M_Lepton(mass_double*xs_obj.pc->GeV);
+  // set bool to use custom cross section (or not)
+  // std::cout << "Bool to use custom HNL cross section calculator: " << is_hnl << std::endl;
+  xs_obj.Set_IS_HNL(is_hnl);
+
 
   double cm2 = SQ(pc->cm);
   double m2 = SQ(pc->meter);

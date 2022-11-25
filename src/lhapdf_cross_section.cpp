@@ -657,6 +657,12 @@ void LHAXS::Set_InteractionType(Current c){
         M_boson2 = Mz2;
 }
 
+void LHAXS::Set_IS_HNL(bool is_hnl){
+    IS_HNL = is_hnl;
+    if(IS_HNL == true)
+      std::cout << "Now using custom HNL cross section calculator (with modified NC xsec)!" << std::endl;
+}
+
 void LHAXS::Set_Neutrino_Energy(double enu){
   ENU = enu;
   ienu = true;
@@ -780,7 +786,7 @@ double LHAXS::KernelXS_TMC(double * k){
   double x = k[0];
   double y = k[1];
   double s = 2.*M_iso*ENU + SQ(M_iso);
-  double Q2 = ( s - SQ(M_iso) )*x*Y;
+  double Q2 = ( s - SQ(M_iso) )*x*y;
 
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
@@ -789,7 +795,7 @@ double LHAXS::KernelXS_TMC(double * k){
   if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
       return 0.;
   }
-  return SigRed_TMC(x,y,q2);
+  return SigRed_TMC(x,y,Q2);
 }
 
 //==================================================================================
@@ -802,7 +808,7 @@ double LHAXS::KernelXS(double * k,int a){
   double x = exp(k[0]);
   double y = exp(k[1]);
   double s = 2.*M_iso*ENU + SQ(M_iso);
-  double Q2 = ( s - SQ(M_iso) )*x*Y;
+  double Q2 = ( s - SQ(M_iso) )*x*y;
 
   // same for CC and NC
   double denum    = SQ(1. + Q2/M_boson2);
@@ -810,13 +816,22 @@ double LHAXS::KernelXS(double * k,int a){
 
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
-  //if(INT_TYPE==CC){
-  //Following HEP PH 0407371 Eq. (7)
-  double h = x*y + d_lepton;
-  if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
-      return 0.;
+  // //if(INT_TYPE==CC){
+  // //Following HEP PH 0407371 Eq. (7)
+  // double h = x*y + d_lepton;
+  // if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
+  //     return 0.;
+  // }
+  // //}
+
+  if(INT_TYPE==CC || IS_HNL==true){  // only CC, but if it's HNL then also NC
+    //Following HEP PH 0407371 Eq. (7)
+    double h = x*y + d_lepton;
+    if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
+        return 0.;
+    }
   }
-  //}
+
   return x * y * norm*Evaluate(Q2, x, y, a);
 }
 
@@ -824,7 +839,7 @@ double LHAXS::KernelXSVar(double * k){
   double x = exp(k[0]);
   double y = exp(k[1]);
   double s = 2.*M_iso*ENU + SQ(M_iso);
-  double Q2 = ( s - SQ(M_iso) )*x*Y;
+  double Q2 = ( s - SQ(M_iso) )*x*y;
 
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
@@ -832,13 +847,22 @@ double LHAXS::KernelXSVar(double * k){
 
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
-  //if(INT_TYPE==CC){
-  //Following HEP PH 0407371 Eq. (7)
-  double h = x*y + d_lepton;
-  if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
-      return 0.;
+  // //if(INT_TYPE==CC){
+  // //Following HEP PH 0407371 Eq. (7)
+  // double h = x*y + d_lepton;
+  // if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
+  //     return 0.;
+  // }
+  // //}
+
+  if(INT_TYPE==CC || IS_HNL==true){  // only CC, but if it's HNL then also NC
+    //Following HEP PH 0407371 Eq. (7)
+    double h = x*y + d_lepton;
+    if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
+        return 0.;
+    }
   }
-  //}
+
   if(ivar==0)//central set
     return x*y*norm*Evaluate(Q2, x, y);
   else
@@ -849,20 +873,29 @@ double LHAXS::KernelXS(double * k){
   double x = exp(k[0]);
   double y = exp(k[1]);
   double s = 2.*M_iso*ENU + SQ(M_iso);
-  double Q2 = ( s - SQ(M_iso) )*x*Y;
+  double Q2 = ( s - SQ(M_iso) )*x*y;
 
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
 
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
-  //if(INT_TYPE==CC){
-  //Following HEP PH 0407371 Eq. (7)
-  double h = x*y + d_lepton;
-  if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
-      return 0.;
+  // //if(INT_TYPE==CC){
+  // //Following HEP PH 0407371 Eq. (7)
+  // double h = x*y + d_lepton;
+  // if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
+  //     return 0.;
+  // }
+  // //}
+
+  if(INT_TYPE==CC || IS_HNL==true){  // only CC, but if it's HNL then also NC
+    //Following HEP PH 0407371 Eq. (7)
+    double h = x*y + d_lepton;
+    if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
+        return 0.;
+    }
   }
-  //}
+
   // x*y is the jacobian
   return x*y*norm*Evaluate(Q2, x, y);
 }
