@@ -491,7 +491,8 @@ double LHAXS::Evaluate(double Q2, double x, double y){
       return SigR_Nu_LO_NC(x, y, xq_arr);
 }
 
-double LHAXS::Evaluate (double Q2, double x, double y, int a){
+double LHAXS::Evaluate(double Q2, double x, double y, int a){
+    // only evaluates central values
     double q = sqrt(Q2)/pc->GeV;
     map<int,vector<double>> xpdf_arr;
     map<int,LHAPDF::PDFUncertainty> xer_arr;
@@ -788,6 +789,10 @@ double LHAXS::KernelXS_TMC(double * k){
   double s = 2.*M_iso*ENU + SQ(M_iso);
   double Q2 = ( s - SQ(M_iso) )*x*y;
 
+  if(Q2/SQ(pc->GeV) < 0.6){
+      return 1.e-99;
+  }
+
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
   //Following HEP PH 0407371 Eq. (7)
@@ -804,25 +809,21 @@ double LHAXS::KernelXS_TMC(double * k){
 
 double LHAXS::KernelXS(double * k,int a){
   if (!ienu)
-    throw std::runtime_error("energy not initialize");
+    throw std::runtime_error("energy not initialized");
   double x = exp(k[0]);
   double y = exp(k[1]);
   double s = 2.*M_iso*ENU + SQ(M_iso);
   double Q2 = ( s - SQ(M_iso) )*x*y;
+
+  if(Q2/SQ(pc->GeV) < 0.6){
+      return 1.e-99;
+  }
 
   // same for CC and NC
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
 
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
-
-  // //if(INT_TYPE==CC){
-  // //Following HEP PH 0407371 Eq. (7)
-  // double h = x*y + d_lepton;
-  // if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
-  //     return 0.;
-  // }
-  // //}
 
   if(INT_TYPE==CC || IS_HNL==true){  // only CC, but if it's HNL then also NC
     //Following HEP PH 0407371 Eq. (7)
@@ -841,19 +842,15 @@ double LHAXS::KernelXSVar(double * k){
   double s = 2.*M_iso*ENU + SQ(M_iso);
   double Q2 = ( s - SQ(M_iso) )*x*y;
 
+  if(Q2/SQ(pc->GeV) < 0.6){
+      return 1.e-99;
+  }
+
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
   //std::cout << Evaluate(Q2, x, y, 0) << std::endl;
 
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
-
-  // //if(INT_TYPE==CC){
-  // //Following HEP PH 0407371 Eq. (7)
-  // double h = x*y + d_lepton;
-  // if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
-  //     return 0.;
-  // }
-  // //}
 
   if(INT_TYPE==CC || IS_HNL==true){  // only CC, but if it's HNL then also NC
     //Following HEP PH 0407371 Eq. (7)
@@ -875,18 +872,19 @@ double LHAXS::KernelXS(double * k){
   double s = 2.*M_iso*ENU + SQ(M_iso);
   double Q2 = ( s - SQ(M_iso) )*x*y;
 
+  // std::cout << "Q2 = " << Q2 << std::endl;
+  // std::cout << "Q2/SQ(pc->GeV) = " << Q2/SQ(pc->GeV) << std::endl;
+  // bool cond = Q2/SQ(pc->GeV) < 0.6;
+  // std::cout << "Q2/SQ(pc->GeV) < 5.0 = " << cond << std::endl;
+
+  if(Q2/SQ(pc->GeV) < 0.6){
+      return 1.e-99;
+  }
+
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
 
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
-
-  // //if(INT_TYPE==CC){
-  // //Following HEP PH 0407371 Eq. (7)
-  // double h = x*y + d_lepton;
-  // if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
-  //     return 0.;
-  // }
-  // //}
 
   if(INT_TYPE==CC || IS_HNL==true){  // only CC, but if it's HNL then also NC
     //Following HEP PH 0407371 Eq. (7)
@@ -897,6 +895,7 @@ double LHAXS::KernelXS(double * k){
   }
 
   // x*y is the jacobian
+  // std::cout << "x*y*norm*Evaluate(Q2, x, y) = " << x*y*norm*Evaluate(Q2, x, y) << std::endl;
   return x*y*norm*Evaluate(Q2, x, y);
 }
 
@@ -905,6 +904,10 @@ double LHAXS::KernelXS_dsdyVar(double logx){
     double s = 2.*M_iso*ENU + SQ(M_iso);
     //cout << s << " " << x << " " << Y_EMU << endl;
     double q2 = ( s - SQ(M_iso) )*x*Y;
+
+    if(q2/SQ(pc->GeV) < 0.6){
+        return 1.e-99;
+    }
 
     double denum = SQ(1. + q2/M_boson2);
     double norm = GF2*M_iso*ENU/(2.*M_PI*denum);
@@ -920,6 +923,10 @@ double LHAXS::KernelXS_dsdy(double logx){
     double s = 2.*M_iso*ENU + SQ(M_iso);
     //cout << s << " " << x << " " << Y_EMU << endl;
     double q2 = ( s - SQ(M_iso) )*x*Y;
+
+    if(q2/SQ(pc->GeV) < 0.6){
+        return 1.e-99;
+    }
 
     double denum = SQ(1. + q2/M_boson2);
     double norm = GF2*M_iso*ENU/(2.*M_PI*denum);
@@ -1008,12 +1015,15 @@ double LHAXS::total(){
   gsl_monte_function F = { &KernelHelper<LHAXS,&LHAXS::KernelXS>, dim, this};
   gsl_monte_vegas_state *s_vegas = gsl_monte_vegas_alloc (dim);
 
+  // std::cout << "In total() before starting integration first step: "<< std::endl;
+
   // training
-  //std::cout << "s_vegas: " << s_vegas << std::endl;
+  // std::cout << "s_vegas: " << s_vegas << std::endl;
   //std::cout << &xl << " " << &xu << " "  << dim << " "  << calls << " "  << &r << std::endl;
   gsl_monte_vegas_integrate (&F, xl, xu, dim, 10000, r, s_vegas,
                               &res, &err);
   //std::cout << "stop" << std::endl;
+  // std::cout << "In total() before starting integration loop: "<< std::endl;
   do
   {
   //std::cout << "Here: "<<gsl_monte_vegas_chisq (s_vegas) << std::endl;
@@ -1021,6 +1031,8 @@ double LHAXS::total(){
                               &res, &err);
   }
   while (fabs (gsl_monte_vegas_chisq (s_vegas) - 1.0) > 0.5 );
+
+  // std::cout << "In total() after integration: "<< std::endl;
 
   gsl_monte_vegas_free (s_vegas);
   gsl_rng_free (r);

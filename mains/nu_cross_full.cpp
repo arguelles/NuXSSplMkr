@@ -57,7 +57,6 @@ int main(int argc, char* argv[]){
       std::cout << "Neutrino Type: " << neutype << std::endl;
       xs_obj.Set_CP_factor(CP_factor[neutype]);
       for (PDFVar pdfvar : {central}){
-        // neutrino = 1., antineutrino = -1
         //std::string filename_dsdy = static_cast<std::string>(SAVE_PATH) + "dsdy-"+NeutrinoTypeLabel[neutype]+"-N-"+IntTypeLabel[IT]+"-"+pdfname+"_"+PDFVarLabel[pdfvar]+".dat";
         std::string filename_sigma = static_cast<std::string>(SAVE_PATH)+"M_"+mass_string+"MeV/sigma-"+NeutrinoTypeLabel[neutype]+"-N-"+IntTypeLabel[IT]+"-"+pdfname+"_"+PDFVarLabel[pdfvar]+".dat";
 
@@ -66,11 +65,9 @@ int main(int argc, char* argv[]){
         //ofstream outputfile_dsdy(filename_dsdy.c_str());
         ofstream outputfile_sigma(filename_sigma.c_str());
 
-        for (double logenu=0.;logenu<=7.;logenu+=0.05){
+        // for (double logenu=0.;logenu<=7.;logenu+=0.05){
+        for (double logenu=0.;logenu<=4.;logenu+=0.05){
           double enu = pow(10, logenu);
-          if (enu < mass_double) {
-            continue;
-          }
           xs_obj.Set_Neutrino_Energy(enu*pc->GeV);
 
           //for (double logx=-5.;logx<0.;logx+=0.025){

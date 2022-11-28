@@ -63,11 +63,8 @@ int main(int argc, char* argv[]){
 
         ofstream outputfile_dsdxdy(filename_dsdxdy.c_str());
 
-        for (double logenu=0.;logenu<=7.;logenu+=0.05){
+        for (double logenu=0.;logenu<=4.;logenu+=0.05){
           double enu = pow(10, logenu);
-          if (enu < mass_double) {
-            continue;
-          }
           xs_obj.Set_Neutrino_Energy(enu*pc->GeV);
           for (double logx=-5.;logx<0.;logx+=0.025){
             double x = pow(10, logx);
