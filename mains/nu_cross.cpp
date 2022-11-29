@@ -75,7 +75,8 @@ int main(int argc, char* argv[]){
                 zz[1] = log(y);
 
                 //double dsigdxdy = xs_obj.KernelXS(zz,PDFVarIndex[pdfvar])/cm2;
-                double dsigdxdy = xs_obj.KernelXS(zz,PDFVarIndex[pdfvar])/m2;
+                // double dsigdxdy = xs_obj.KernelXS(zz,PDFVarIndex[pdfvar])/m2;
+                double dsigdxdy = xs_obj.KernelXS(zz)/m2;
                 outputfile_dsdxdy << enu << "\t"<< x <<  "\t" << y << "\t" << dsigdxdy << std::endl;
             }
           }

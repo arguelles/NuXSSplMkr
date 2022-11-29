@@ -789,9 +789,9 @@ double LHAXS::KernelXS_TMC(double * k){
   double s = 2.*M_iso*ENU + SQ(M_iso);
   double Q2 = ( s - SQ(M_iso) )*x*y;
 
-  if(Q2/SQ(pc->GeV) < 0.6){
-      return 1.e-99;
-  }
+  // if(Q2/SQ(pc->GeV) < 0.6){
+  //     return 1.e-99;
+  // }
 
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
@@ -815,9 +815,9 @@ double LHAXS::KernelXS(double * k,int a){
   double s = 2.*M_iso*ENU + SQ(M_iso);
   double Q2 = ( s - SQ(M_iso) )*x*y;
 
-  if(Q2/SQ(pc->GeV) < 0.6){
-      return 1.e-99;
-  }
+  // if(Q2/SQ(pc->GeV) < 0.6){
+  //     return 1.e-99;
+  // }
 
   // same for CC and NC
   double denum    = SQ(1. + Q2/M_boson2);
@@ -833,7 +833,9 @@ double LHAXS::KernelXS(double * k,int a){
     }
   }
 
-  return x * y * norm*Evaluate(Q2, x, y, a);
+  // std::cout << "Using function: LHAXS::KernelXS(double * k,int a)" << std::endl;
+  // std::cout << "a = " << a << std::endl;
+  return x*y*norm*Evaluate(Q2, x, y, a);
 }
 
 double LHAXS::KernelXSVar(double * k){
@@ -842,9 +844,9 @@ double LHAXS::KernelXSVar(double * k){
   double s = 2.*M_iso*ENU + SQ(M_iso);
   double Q2 = ( s - SQ(M_iso) )*x*y;
 
-  if(Q2/SQ(pc->GeV) < 0.6){
-      return 1.e-99;
-  }
+  // if(Q2/SQ(pc->GeV) < 0.6){
+  //     return 1.e-99;
+  // }
 
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
@@ -877,9 +879,9 @@ double LHAXS::KernelXS(double * k){
   // bool cond = Q2/SQ(pc->GeV) < 0.6;
   // std::cout << "Q2/SQ(pc->GeV) < 5.0 = " << cond << std::endl;
 
-  if(Q2/SQ(pc->GeV) < 0.6){
-      return 1.e-99;
-  }
+  // if(Q2/SQ(pc->GeV) < 0.6){
+  //     return 1.e-99;
+  // }
 
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
@@ -896,6 +898,7 @@ double LHAXS::KernelXS(double * k){
 
   // x*y is the jacobian
   // std::cout << "x*y*norm*Evaluate(Q2, x, y) = " << x*y*norm*Evaluate(Q2, x, y) << std::endl;
+  // std::cout << "Using function: LHAXS::KernelXS(double * k)" << std::endl;
   return x*y*norm*Evaluate(Q2, x, y);
 }
 
@@ -905,9 +908,9 @@ double LHAXS::KernelXS_dsdyVar(double logx){
     //cout << s << " " << x << " " << Y_EMU << endl;
     double q2 = ( s - SQ(M_iso) )*x*Y;
 
-    if(q2/SQ(pc->GeV) < 0.6){
-        return 1.e-99;
-    }
+    // if(q2/SQ(pc->GeV) < 0.6){
+    //     return 1.e-99;
+    // }
 
     double denum = SQ(1. + q2/M_boson2);
     double norm = GF2*M_iso*ENU/(2.*M_PI*denum);
@@ -924,9 +927,9 @@ double LHAXS::KernelXS_dsdy(double logx){
     //cout << s << " " << x << " " << Y_EMU << endl;
     double q2 = ( s - SQ(M_iso) )*x*Y;
 
-    if(q2/SQ(pc->GeV) < 0.6){
-        return 1.e-99;
-    }
+    // if(q2/SQ(pc->GeV) < 0.6){
+    //     return 1.e-99;
+    // }
 
     double denum = SQ(1. + q2/M_boson2);
     double norm = GF2*M_iso*ENU/(2.*M_PI*denum);
