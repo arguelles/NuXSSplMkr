@@ -1,6 +1,3 @@
-#!/bin/sh /cvmfs/icecube.opensciencegrid.org/users/BeyondStandardModel/bsm-py2-v3.1.1/icetray-start-standard
-#METAPROJECT /data/user/lfischer/software/oscnext_hnl/build/
-
 import numpy
 import operator
 import re
@@ -216,13 +213,30 @@ def SplineFitMaker3D(filename, scale = 'lin', prefix = '', skip_header = 0, colu
     print("Done. Generated :"  + prefix+nfilename)
 
 if __name__ == "__main__":
-    inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/HNL/"
-    # # take all
-    # inpaths = glob(os.path.join(inpath_base, 'M_*'))
-    # only a specific one
+    # set inpath
+    # inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/HNL/"
+    # inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/HNL_test/"
+    # inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/HNL_modified/"
+    inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/HNL_SUM/"
+
+    # inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/tau/"
+    # inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/tau_modified/"
+    # inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/tau_modified_2/"
+    # inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/tau_modified_3/"
+    # inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/tau_modified_4/"
+    # inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/tau_modified_5/"
+    # inpath_base = "/data/user/lfischer/software/NuXSSplMkr/data/tau_modified_6/"
+
+    # # take all masses
+    inpaths = glob(os.path.join(inpath_base, 'M_*'))
+    # only a specific mass
+    # inpaths = [os.path.join(inpath_base, 'M_0000MeV')]
+    # inpaths = [os.path.join(inpath_base, 'M_0100MeV')]
     # inpaths = [os.path.join(inpath_base, 'M_0200MeV')]
     # inpaths = [os.path.join(inpath_base, 'M_0000MeV')]
-    inpaths = [os.path.join(inpath_base, 'M_0300MeV')]
+    # inpaths = [os.path.join(inpath_base, 'M_0300MeV')]
+    # inpaths = [os.path.join(inpath_base, 'M_1777MeV')]
+
 
     print('All input directories:\n', inpaths)
 
@@ -237,15 +251,16 @@ if __name__ == "__main__":
         outpath = inpath + '/'
         print('Outpath: {}'.format(outpath))
 
-        for int_type in ["cc","nc"]:
-            for pdf in pdf_list:
-                for neutype in neutrino_type:
-                    filename = "sigma-"+neutype+"-N-"+int_type+"-"+pdf
-                    print("processing: "+filename)
-                    infilepath = inpath + '/' + filename + ".dat"
-                    print('Infilepath: {}'.format(infilepath))
-                    SplineFitMaker1D(infilepath, outname = filename + ".fits",
-                            scale = 'log',prefix = outpath, N = 65, column = 1, oscale = 'log')
+        # for int_type in ["cc","nc"]:
+        #     for pdf in pdf_list:
+        #         for neutype in neutrino_type:
+        #             filename = "sigma-"+neutype+"-N-"+int_type+"-"+pdf
+        #             print("processing: "+filename)
+        #             infilepath = inpath + '/' + filename + ".dat"
+        #             if not os.path.isfile(infilepath):continue
+        #             print('Infilepath: {}'.format(infilepath))
+        #             SplineFitMaker1D(infilepath, outname = filename + ".fits",
+        #                     scale = 'log',prefix = outpath, N = 65, column = 1, oscale = 'log')
 
         for int_type in ["cc","nc"]:
             for pdf in pdf_list:
@@ -253,6 +268,51 @@ if __name__ == "__main__":
                     filename = "dsdxdy-"+neutype+"-N-"+int_type+"-"+pdf
                     print("processing: "+filename)
                     infilepath = inpath + '/' + filename + ".dat"
+                    if not os.path.isfile(infilepath):continue
                     print('Infilepath: {}'.format(infilepath))
                     SplineFitMaker3D(infilepath, outname = filename + ".fits",
                             scale = 'log',prefix = outpath, N = 65, column = 3, oscale = 'log')
+
+#     #### Start - Original code (carguelles) ####
+
+#     inpath = "/home/carguelles/NuXSSplMkr/data/newxs_2017/"
+#     outpath = "/home/carguelles/NuXSSplMkr/fits/newxs_2017/"
+
+#     neutrino_type = ['numu','numubar']
+
+#     pdf_list = ['CT10nlo_central','CT10nlo_minus','CT10nlo_plus',
+#                 'HERAPDF15NLO_EIG_central','HERAPDF15NLO_EIG_minus','HERAPDF15NLO_EIG_plus',
+#                 'NNPDF23_nlo_as_0118_central','NNPDF23_nlo_as_0118_minus','NNPDF23_nlo_as_0118_plus']
+
+#     #pdf_list = ['NNPDF23_nlo_as_0118_central','NNPDF23_nlo_as_0118_minus','NNPDF23_nlo_as_0118_plus']
+#     pdf_list = ['HERAPDF15NLO_EIG_central']
+
+#     #pdf = "HERAPDF15NLO_EIG_central"
+#     #filename = "dsdxdy-numu-N-cc-"+pdf
+#     #SplineFitMaker3D(inpath + filename + ".dat", outname = filename + ".fits",
+#     #        scale = 'log',prefix = outpath, N = 50, column = 3, oscale = 'log')
+# #
+# #    filename = "dsdxdy-numubar-N-cc-"+pdf
+# #    SplineFitMaker3D(inpath + filename + ".dat", outname = filename + ".fits",
+# #            scale = 'log',prefix = outpath, N = 50, column = 3, oscale = 'log' )
+
+# #    quit()
+#     for int_type in ["cc","nc"]:
+#         for pdf in pdf_list:
+#             for neutype in neutrino_type:
+#                 filename = "sigma-"+neutype+"-N-"+int_type+"-"+pdf
+#                 print "processing: "+filename
+#                 SplineFitMaker1D(inpath + filename + ".dat", outname = filename + ".fits",
+#                         scale = 'log',prefix = outpath, N = 65, column = 1, oscale = 'log')
+
+#     exit()
+
+#     for int_type in ["cc","nc"]:
+#         for pdf in pdf_list:
+#             for neutype in neutrino_type:
+#                 filename = "dsdxdy-"+neutype+"-N-"+int_type+"-"+pdf
+#                 print "processing: "+filename
+#                 SplineFitMaker3D(inpath + filename + ".dat", outname = filename + ".fits",
+#                         scale = 'log',prefix = outpath, N = 65, column = 3, oscale = 'log')
+
+#     #### End - Original code (carguelles) ####
