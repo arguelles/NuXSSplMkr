@@ -1,1 +1,1 @@
-./bin/nu_cross.exe HERAPDF15NLO_EIG
+./bin/nu_cross.exe PDFNAME LEPTONMASS ISHNLBOOL OUTBASEDIR

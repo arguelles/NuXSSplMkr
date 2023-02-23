@@ -26,7 +26,7 @@ LHAXS::LHAXS(std::string PDFname){
     //error_band = 68;
 
     // fundamental couplings
-    s_w = 0.2223; // sin^2(weak_angle)
+    s_w = 0.2229; // sin^2(weak_angle) from CODATA 2018
     Lu2 = ( 1. - (4./3.)*s_w) * ( 1. - (4./3.)*s_w);
     Ld2 = (-1. + (2./3.)*s_w) * (-1. + (2./3.)*s_w);
     Ru2 = (    - (4./3.)*s_w) * (    - (4./3.)*s_w);
@@ -358,6 +358,9 @@ map<int,double> LHAXS::PDFExtract(double x, double q2){
 }
 
 double LHAXS::SigRed_Evaluate(double q2, double x, double y){
+
+    d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
+
     //Take this representation of q !!
     double y_p = (1. - d_lepton / x) + (1.- d_lepton/x - y) * (1. - y);
     double y_m = (1. - d_lepton / x) - (1.- d_lepton/x - y) * (1. - y);
@@ -408,6 +411,8 @@ double LHAXS::SigR_Nu_LO_NC(double x,double y, map<int, double> xq_arr){
 
 double LHAXS::SigR_Nu_LO(double x, double y, map<int,double> xq_arr){
 	double k = 0.;
+
+  d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
 	double y_p = (1. - d_lepton / x) + (1.- d_lepton/x - y) * (1. - y);
 	double y_m = (1. - d_lepton / x) - (1.- d_lepton/x - y) * (1. - y);
@@ -486,7 +491,8 @@ double LHAXS::Evaluate(double Q2, double x, double y){
       return SigR_Nu_LO_NC(x, y, xq_arr);
 }
 
-double LHAXS::Evaluate (double Q2, double x, double y, int a){
+double LHAXS::Evaluate(double Q2, double x, double y, int a){
+    // only evaluates central values
     double q = sqrt(Q2)/pc->GeV;
     map<int,vector<double>> xpdf_arr;
     map<int,LHAPDF::PDFUncertainty> xer_arr;
@@ -652,6 +658,12 @@ void LHAXS::Set_InteractionType(Current c){
         M_boson2 = Mz2;
 }
 
+void LHAXS::Set_IS_HNL(bool is_hnl){
+    IS_HNL = is_hnl;
+    if(IS_HNL == true)
+      std::cout << "Now using custom HNL cross section calculator (with modified NC xsec)!" << std::endl;
+}
+
 void LHAXS::Set_Neutrino_Energy(double enu){
   ENU = enu;
   ienu = true;
@@ -774,14 +786,21 @@ double LHAXS::FL_TMC(double x, double q2){
 double LHAXS::KernelXS_TMC(double * k){
   double x = k[0];
   double y = k[1];
-  double q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
+  double s = 2.*M_iso*ENU + SQ(M_iso);
+  double Q2 = ( s - SQ(M_iso) )*x*y;
+
+  // if(Q2/SQ(pc->GeV) < 0.6){
+  //     return 1.e-99;
+  // }
+
+  d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
   //Following HEP PH 0407371 Eq. (7)
   double h = x*y + d_lepton;
-  double cc = (1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton;
-  if ( cc > 0.)
+  if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
       return 0.;
-  return SigRed_TMC(x,y,q2);
+  }
+  return SigRed_TMC(x,y,Q2);
 }
 
 //==================================================================================
@@ -790,27 +809,44 @@ double LHAXS::KernelXS_TMC(double * k){
 
 double LHAXS::KernelXS(double * k,int a){
   if (!ienu)
-    throw std::runtime_error("energy not initialize");
+    throw std::runtime_error("energy not initialized");
   double x = exp(k[0]);
   double y = exp(k[1]);
-  double Q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
+  double s = 2.*M_iso*ENU + SQ(M_iso);
+  double Q2 = ( s - SQ(M_iso) )*x*y;
+
+  // if(Q2/SQ(pc->GeV) < 0.6){
+  //     return 1.e-99;
+  // }
 
   // same for CC and NC
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
 
-  if(INT_TYPE==CC){
+  d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
+
+  if(INT_TYPE==CC || IS_HNL==true){  // only CC, but if it's HNL then also NC
+    //Following HEP PH 0407371 Eq. (7)
     double h = x*y + d_lepton;
-    if ((1. + x*d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.)
+    if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
         return 0.;
+    }
   }
-  return x * y * norm*Evaluate(Q2, x, y, a);
+
+  // std::cout << "Using function: LHAXS::KernelXS(double * k,int a)" << std::endl;
+  // std::cout << "a = " << a << std::endl;
+  return x*y*norm*Evaluate(Q2, x, y, a);
 }
 
 double LHAXS::KernelXSVar(double * k){
   double x = exp(k[0]);
   double y = exp(k[1]);
-  double Q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
+  double s = 2.*M_iso*ENU + SQ(M_iso);
+  double Q2 = ( s - SQ(M_iso) )*x*y;
+
+  // if(Q2/SQ(pc->GeV) < 0.6){
+  //     return 1.e-99;
+  // }
 
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
@@ -818,12 +854,14 @@ double LHAXS::KernelXSVar(double * k){
 
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
-  if(INT_TYPE==CC){
+  if(INT_TYPE==CC || IS_HNL==true){  // only CC, but if it's HNL then also NC
     //Following HEP PH 0407371 Eq. (7)
     double h = x*y + d_lepton;
-    if ((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.)
+    if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
         return 0.;
+    }
   }
+
   if(ivar==0)//central set
     return x*y*norm*Evaluate(Q2, x, y);
   else
@@ -833,20 +871,34 @@ double LHAXS::KernelXSVar(double * k){
 double LHAXS::KernelXS(double * k){
   double x = exp(k[0]);
   double y = exp(k[1]);
-  double Q2 = (2.*M_iso*ENU + SQ(M_iso))*x*y;
+  double s = 2.*M_iso*ENU + SQ(M_iso);
+  double Q2 = ( s - SQ(M_iso) )*x*y;
+
+  // std::cout << "Q2 = " << Q2 << std::endl;
+  // std::cout << "Q2/SQ(pc->GeV) = " << Q2/SQ(pc->GeV) << std::endl;
+  // bool cond = Q2/SQ(pc->GeV) < 0.6;
+  // std::cout << "Q2/SQ(pc->GeV) < 5.0 = " << cond << std::endl;
+
+  // if(Q2/SQ(pc->GeV) < 0.6){
+  //     return 1.e-99;
+  // }
 
   double denum    = SQ(1. + Q2/M_boson2);
   double norm     = GF2*M_iso*ENU/(2.*M_PI*denum);
 
   d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
-  //Following HEP PH 0407371 Eq. (7)
-  if(INT_TYPE==CC){
+  if(INT_TYPE==CC || IS_HNL==true){  // only CC, but if it's HNL then also NC
+    //Following HEP PH 0407371 Eq. (7)
     double h = x*y + d_lepton;
-    if ((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.)
+    if((1. + x* d_nucleon) * h*h - (x+ d_lepton)*h + x * d_lepton > 0.){
         return 0.;
+    }
   }
+
   // x*y is the jacobian
+  // std::cout << "x*y*norm*Evaluate(Q2, x, y) = " << x*y*norm*Evaluate(Q2, x, y) << std::endl;
+  // std::cout << "Using function: LHAXS::KernelXS(double * k)" << std::endl;
   return x*y*norm*Evaluate(Q2, x, y);
 }
 
@@ -854,11 +906,14 @@ double LHAXS::KernelXS_dsdyVar(double logx){
     double x = exp(x);
     double s = 2.*M_iso*ENU + SQ(M_iso);
     //cout << s << " " << x << " " << Y_EMU << endl;
-    double q2 = s*x*Y;
+    double q2 = ( s - SQ(M_iso) )*x*Y;
+
+    // if(q2/SQ(pc->GeV) < 0.6){
+    //     return 1.e-99;
+    // }
 
     double denum = SQ(1. + q2/M_boson2);
     double norm = GF2*M_iso*ENU/(2.*M_PI*denum);
-    d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
   if(ivar==0)//central set
     return x * norm * Evaluate(q2, x, Y);
@@ -870,12 +925,14 @@ double LHAXS::KernelXS_dsdy(double logx){
     double x = exp(x);
     double s = 2.*M_iso*ENU + SQ(M_iso);
     //cout << s << " " << x << " " << Y_EMU << endl;
-    double q2 = s*x*Y;
+    double q2 = ( s - SQ(M_iso) )*x*Y;
+
+    // if(q2/SQ(pc->GeV) < 0.6){
+    //     return 1.e-99;
+    // }
 
     double denum = SQ(1. + q2/M_boson2);
     double norm = GF2*M_iso*ENU/(2.*M_PI*denum);
-
-    d_lepton = SQ(M_lepton)/(2.*M_iso*ENU);
 
     return x * norm * Evaluate (q2, x, Y);
 }
@@ -961,12 +1018,15 @@ double LHAXS::total(){
   gsl_monte_function F = { &KernelHelper<LHAXS,&LHAXS::KernelXS>, dim, this};
   gsl_monte_vegas_state *s_vegas = gsl_monte_vegas_alloc (dim);
 
+  // std::cout << "In total() before starting integration first step: "<< std::endl;
+
   // training
-  //std::cout << "s_vegas: " << s_vegas << std::endl;
+  // std::cout << "s_vegas: " << s_vegas << std::endl;
   //std::cout << &xl << " " << &xu << " "  << dim << " "  << calls << " "  << &r << std::endl;
   gsl_monte_vegas_integrate (&F, xl, xu, dim, 10000, r, s_vegas,
                               &res, &err);
   //std::cout << "stop" << std::endl;
+  // std::cout << "In total() before starting integration loop: "<< std::endl;
   do
   {
   //std::cout << "Here: "<<gsl_monte_vegas_chisq (s_vegas) << std::endl;
@@ -974,6 +1034,8 @@ double LHAXS::total(){
                               &res, &err);
   }
   while (fabs (gsl_monte_vegas_chisq (s_vegas) - 1.0) > 0.5 );
+
+  // std::cout << "In total() after integration: "<< std::endl;
 
   gsl_monte_vegas_free (s_vegas);
   gsl_rng_free (r);

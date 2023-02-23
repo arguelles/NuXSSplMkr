@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+
+# Cross section files
+*.dat
+*.fits
+*.xml
